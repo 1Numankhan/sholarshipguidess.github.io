@@ -1,1 +1,641 @@
+html
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScholarPath — Pakistan Scholarship Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;--text:#e8e8f0;--muted:#7878a0;--gold:#d4af37;--success:#2ecc71;--info:#3498db;--warn:#f39c12;--danger:#e74c3c;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:block;}
+#screen-welcome{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;position:relative;overflow:hidden;background:radial-gradient(ellipse at 20% 50%,#1a0a2e 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,#0a1a2e 0%,transparent 50%),var(--bg);}
+#screen-welcome::before{content:'';position:absolute;inset:0;background-image:radial-gradient(1px 1px at 20% 30%,rgba(212,175,55,.4) 0%,transparent 100%),radial-gradient(1px 1px at 80% 70%,rgba(212,175,55,.3) 0%,transparent 100%),radial-gradient(1px 1px at 50% 50%,rgba(255,255,255,.1) 0%,transparent 100%);background-size:200px 200px,300px 300px,150px 150px;animation:starfield 20s linear infinite;pointer-events:none;}
+@keyframes starfield{0%{transform:translateY(0)}100%{transform:translateY(-200px)}}
+.welcome-content{text-align:center;z-index:1;animation:fadeUp 1s ease forwards;padding:2rem;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.logo-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.3);border-radius:50px;padding:6px 16px;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:2rem;}
+.welcome-title{font-family:'Playfair Display',serif;font-size:clamp(3rem,8vw,7rem);font-weight:900;line-height:.95;margin-bottom:1.5rem;letter-spacing:-2px;}
+.welcome-title span{display:block;background:linear-gradient(135deg,#d4af37,#f0d060,#d4af37);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.welcome-sub{font-size:1.05rem;color:var(--muted);max-width:540px;margin:0 auto 3rem;line-height:1.7;}
+.country-flags{display:flex;gap:1rem;justify-content:center;margin-bottom:3rem;flex-wrap:wrap;}
+.flag-pill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:8px 18px;font-size:14px;font-weight:500;transition:all .2s;}
+.flag-pill:hover{border-color:var(--gold);transform:translateY(-2px);}
+.btn-start{background:linear-gradient(135deg,#d4af37,#f0d060);color:#0a0a0f;border:none;padding:16px 48px;border-radius:50px;font-size:1rem;font-weight:700;cursor:pointer;letter-spacing:1px;text-transform:uppercase;transition:all .3s;box-shadow:0 0 40px rgba(212,175,55,.3);}
+.btn-start:hover{transform:scale(1.05);box-shadow:0 0 60px rgba(212,175,55,.5);}
+#screen-register{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;background:var(--bg);}
+.register-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:3rem;width:100%;max-width:540px;animation:fadeUp .6s ease forwards;}
+.register-card h2{font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.5rem;}
+.register-card>p{color:var(--muted);margin-bottom:2rem;font-size:.95rem;}
+.form-group{margin-bottom:1.2rem;}
+.form-group label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px;}
+.form-group input,.form-group select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;outline:none;transition:border-color .2s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--gold);}
+.form-group select option{background:var(--surface2);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.country-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem;}
+.country-toggle{background:var(--surface2);border:2px solid var(--border);border-radius:12px;padding:12px;cursor:pointer;text-align:center;transition:all .2s;position:relative;}
+.country-toggle .cflag{font-size:24px;display:block;margin-bottom:4px;}
+.country-toggle .cname{font-size:13px;font-weight:500;}
+.country-toggle .chk{position:absolute;top:8px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;}
+.country-toggle.selected{border-color:var(--gold);background:rgba(212,175,55,.08);}
+.country-toggle.selected .chk{background:var(--gold);color:#000;}
+.btn-primary{width:100%;background:linear-gradient(135deg,#d4af37,#f0d060);color:#0a0a0f;border:none;padding:14px;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .2s;margin-top:.5rem;}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(212,175,55,.3);}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-brand{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--gold);}
+.topbar-user{display:flex;align-items:center;gap:12px;font-size:14px;}
+.avatar{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),#f0d060);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#000;font-size:14px;}
+.dashboard-layout{display:grid;grid-template-columns:265px 1fr;min-height:calc(100vh - 65px);}
+.sidebar{background:var(--surface);border-right:1px solid var(--border);padding:1.5rem 0;position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto;}
+.sidebar-section{padding:0 1rem 1rem;margin-bottom:.5rem;}
+.ss-title{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--muted);padding:0 .5rem;margin-bottom:.5rem;}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);transition:all .2s;}
+.sidebar-item:hover{background:var(--surface2);color:var(--text);}
+.sidebar-item.active{background:rgba(212,175,55,.1);color:var(--gold);}
+.sidebar-item .icon{width:20px;text-align:center;}
+.cb{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;cursor:pointer;font-size:13px;font-weight:500;color:var(--muted);transition:all .2s;margin-bottom:2px;}
+.cb:hover{background:var(--surface2);color:var(--text);}
+.cb .dot{width:8px;height:8px;border-radius:50%;}
+.dot-kr{background:#c0392b;}.dot-cn{background:#e74c3c;}.dot-it{background:#27ae60;}.dot-de{background:#f39c12;}
+.main-content{padding:2rem;overflow-y:auto;}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:1rem;margin-bottom:2rem;}
+.pcard{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;position:relative;overflow:hidden;cursor:pointer;transition:border-color .2s;}
+.pcard:hover{border-color:var(--gold);}
+.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.pcard.cn::before{background:#e74c3c;}.pcard.kr::before{background:#c0392b;}.pcard.it::before{background:#27ae60;}.pcard.de::before{background:#f39c12;}.pcard.docs::before{background:var(--gold);}
+.pcard-flag{font-size:28px;margin-bottom:.5rem;}
+.pcard-name{font-size:13px;color:var(--muted);margin-bottom:.5rem;}
+.pcard-pct{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;}
+.pbar-track{height:4px;background:var(--border);border-radius:2px;margin-top:.75rem;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:2px;transition:width .8s ease;}
+.fill-cn{background:#e74c3c;}.fill-kr{background:#c0392b;}.fill-it{background:#27ae60;}.fill-de{background:#f39c12;}.fill-gold{background:var(--gold);}
+.panel{display:none;}.panel.active{display:block;animation:fadeUp .3s ease;}
+.panel-title{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:700;margin-bottom:.25rem;}
+.panel-sub{color:var(--muted);font-size:.9rem;margin-bottom:2rem;}
+.sh2{font-family:'Playfair Display',serif;font-size:1.15rem;margin:1.5rem 0 1rem;}
+.cph{display:flex;align-items:center;gap:16px;margin-bottom:2rem;padding:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:16px;}
+.cfb{font-size:52px;}
+.sc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1rem;transition:border-color .2s;}
+.sc:hover{border-color:var(--gold);}
+.sc h3{font-size:1rem;font-weight:700;margin-bottom:.4rem;}
+.sc-meta{display:flex;gap:1rem;font-size:12px;color:var(--muted);margin-bottom:1rem;flex-wrap:wrap;}
+.sc-tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;}
+.sc-tag{background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:12px;color:var(--muted);}
+.sc-dl{font-size:13px;padding:8px 12px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.2);border-radius:8px;color:var(--gold);font-weight:500;margin-bottom:.5rem;}
+.plinks{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.75rem;}
+.pl{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.25);border-radius:8px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;}
+.pl:hover{background:rgba(212,175,55,.18);}
+.igrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:1rem;margin-bottom:2rem;}
+.ic{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem;}
+.ic h4{font-size:.85rem;font-weight:700;margin-bottom:1rem;color:var(--gold);text-transform:uppercase;letter-spacing:1px;}
+.ic ul{list-style:none;}
+.ic ul li{font-size:13px;color:var(--text);padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:8px;line-height:1.5;}
+.ic ul li:last-child{border-bottom:none;}
+.ic ul li::before{content:'→';color:var(--gold);flex-shrink:0;}
+.step-box{display:flex;gap:1rem;align-items:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;margin-bottom:.75rem;}
+.sn{width:32px;height:32px;background:linear-gradient(135deg,var(--gold),#f0d060);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#000;flex-shrink:0;}
+.step-box h4{font-size:14px;font-weight:700;margin-bottom:4px;}
+.step-box p{font-size:13px;color:var(--muted);line-height:1.5;}
+.sdiv{height:1px;background:var(--border);margin:1.5rem 0;}
+.abox{display:flex;gap:12px;padding:14px 16px;border-radius:12px;margin-bottom:1.5rem;font-size:13px;line-height:1.5;}
+.abox.warn{background:rgba(243,156,18,.1);border:1px solid rgba(243,156,18,.3);color:#f39c12;}
+.abox.info{background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.3);color:#3498db;}
+.abox.success{background:rgba(46,204,113,.1);border:1px solid rgba(46,204,113,.3);color:#2ecc71;}
+.abox.danger{background:rgba(231,76,60,.1);border:1px solid rgba(231,76,60,.3);color:#e74c3c;}
+.checklist-section{background:var(--surface);border:1px solid var(--border);border-radius:16px;margin-bottom:1.5rem;overflow:hidden;}
+.cl-header{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 1.5rem;cursor:pointer;border-bottom:1px solid var(--border);transition:background .2s;}
+.cl-header:hover{background:var(--surface2);}
+.cl-hl{display:flex;align-items:center;gap:12px;}
+.cl-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.cl-header h3{font-size:1rem;font-weight:600;}
+.sp{font-size:12px;color:var(--muted);}
+.cl-body{padding:1rem 1.5rem;}
+.ci{display:flex;align-items:flex-start;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:all .2s;}
+.ci:last-child{border-bottom:none;}
+.ci:hover{opacity:.85;}
+.cbox{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;flex-shrink:0;margin-top:1px;transition:all .2s;}
+.ci.done .cbox{background:var(--gold);border-color:var(--gold);color:#000;}
+.ci.done .cl{text-decoration:line-through;opacity:.5;}
+.cl{font-size:14px;font-weight:500;line-height:1.4;}
+.cd{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-left:8px;text-transform:uppercase;letter-spacing:.5px;}
+.tr{background:rgba(192,57,43,.2);color:#e74c3c;}.to{background:rgba(39,174,96,.2);color:#2ecc71;}.tc{background:rgba(243,156,18,.2);color:#f39c12;}
+.tbl{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:13px;}
+.tbl th{background:var(--surface2);padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);}
+.tbl td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+.tlink{color:var(--gold);cursor:pointer;font-size:11px;text-decoration:underline;}
+.bdn{background:rgba(46,204,113,.15);color:#2ecc71;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;text-transform:uppercase;margin-left:5px;}
+.collapsible-body{display:none;}.collapsible-body.open{display:block;}
+.chevron{transition:transform .2s;}.chevron.open{transform:rotate(180deg);}
+.btn-sm{padding:8px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;}
+.btn-gold{background:var(--gold);color:#000;}
+.et{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--gold);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;position:relative;}
+.elabel{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--gold);margin-bottom:.75rem;display:block;font-weight:700;}
+.ef{font-size:13px;color:var(--muted);margin-bottom:.2rem;}
+.ef strong{color:var(--text);}
+.ebody{font-size:13px;color:var(--text);margin-top:.75rem;line-height:1.8;white-space:pre-line;}
+.ebody em{color:var(--gold);}
+.cbtn{position:absolute;top:1rem;right:1rem;padding:4px 10px;background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.3);border-radius:6px;font-size:11px;color:var(--gold);cursor:pointer;border:none;}
+.cbtn:hover{background:rgba(212,175,55,.3);}
+.chat-fab-wrap{position:fixed;bottom:1.5rem;right:1.5rem;z-index:500;}
+.chat-fab{width:56px;height:56px;background:linear-gradient(135deg,var(--gold),#f0d060);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:26px;box-shadow:0 4px 20px rgba(212,175,55,.4);transition:transform .2s;}
+.chat-fab:hover{transform:scale(1.1);}
+.chat-window{display:none;position:fixed;bottom:5rem;right:1.5rem;width:360px;background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;z-index:501;box-shadow:0 20px 60px rgba(0,0,0,.6);flex-direction:column;}
+.chat-window.open{display:flex;}
+.ch-head{background:var(--surface2);padding:1rem 1.25rem;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border);}
+.ch-av{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),#f0d060);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.ch-head h4{font-size:14px;font-weight:700;}
+.ch-head p{font-size:11px;color:var(--success);}
+.ch-close{margin-left:auto;cursor:pointer;color:var(--muted);font-size:20px;line-height:1;}
+.ch-msgs{height:270px;overflow-y:auto;padding:1rem;display:flex;flex-direction:column;gap:.75rem;}
+.msg{max-width:86%;padding:10px 14px;border-radius:14px;font-size:13px;line-height:1.5;}
+.msg.bot{background:var(--surface2);align-self:flex-start;border-bottom-left-radius:4px;}
+.msg.um{background:rgba(212,175,55,.12);border:1px solid rgba(212,175,55,.2);align-self:flex-end;border-bottom-right-radius:4px;}
+.ch-sugs{display:flex;gap:.4rem;padding:.6rem 1rem;flex-wrap:wrap;border-top:1px solid var(--border);background:var(--surface);}
+.sug{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;cursor:pointer;color:var(--text);transition:all .2s;white-space:nowrap;}
+.sug:hover{border-color:var(--gold);color:var(--gold);}
+.ch-in{display:flex;gap:.5rem;padding:.75rem 1rem;border-top:1px solid var(--border);}
+.ch-in input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--text);font-size:13px;outline:none;}
+.ch-in input:focus{border-color:var(--gold);}
+.ch-send{background:var(--gold);color:#000;border:none;border-radius:10px;padding:8px 14px;cursor:pointer;font-weight:700;font-size:13px;}
+@media(max-width:768px){.dashboard-layout{grid-template-columns:1fr;}.sidebar{display:none;}.form-row{grid-template-columns:1fr;}.chat-window{width:calc(100vw - 3rem);}}
+@media print{.sidebar,.topbar,.chat-fab-wrap{display:none!important;}.dashboard-layout{grid-template-columns:1fr;}.panel{display:block!important;}.collapsible-body{display:block!important;}#screen-welcome,#screen-register{display:none!important;}}
+</style>
+</head>
+<body>
+
+<!-- WELCOME -->
+<div id="screen-welcome" class="screen active" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
+<div class="welcome-content">
+  <div class="logo-badge">✦ Full-Stack Scholarship Consultant ✦</div>
+  <h1 class="welcome-title">Your Path to<span>Global Scholarships</span></h1>
+  <p class="welcome-sub">Complete A–Z guide for Pakistani students — real portals, professor email templates, visa steps, university tables & AI advisor. China, Korea, Italy & Germany all covered in full detail.</p>
+  <div class="country-flags">
+    <div class="flag-pill"><span>🇨🇳</span> China</div>
+    <div class="flag-pill"><span>🇰🇷</span> Korea</div>
+    <div class="flag-pill"><span>🇮🇹</span> Italy</div>
+    <div class="flag-pill"><span>🇩🇪</span> Germany</div>
+  </div>
+  <button class="btn-start" onclick="showScreen('register')">Start Your Journey →</button>
+</div>
+</div>
+
+<!-- REGISTER -->
+<div id="screen-register" class="screen">
+<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;background:var(--bg);">
+  <div class="register-card">
+    <h2>Create Your Profile</h2>
+    <p>Personalize your scholarship dashboard based on your goals.</p>
+    <div class="form-row">
+      <div class="form-group"><label>First Name</label><input type="text" id="reg-fname" placeholder="Ahmad"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" id="reg-lname" placeholder="Khan"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Degree Level</label>
+        <select id="reg-degree"><option value="">Select...</option><option>Bachelor's (BS)</option><option>Master's (MS/MPhil)</option><option>PhD</option><option>Postdoc</option></select>
+      </div>
+      <div class="form-group"><label>Province</label>
+        <select id="reg-province"><option value="">Select...</option><option>Punjab</option><option>Sindh</option><option>KPK</option><option>Balochistan</option><option>Gilgit-Baltistan</option><option>AJK</option><option>Islamabad (ICT)</option></select>
+      </div>
+    </div>
+    <div class="form-group"><label>Field of Study</label>
+      <select id="reg-field"><option value="">Select...</option><option>Computer Science / IT</option><option>Engineering</option><option>Business / Management</option><option>Medicine / Health Sciences</option><option>Natural Sciences</option><option>Social Sciences / Humanities</option><option>Arts / Design</option><option>Agriculture</option><option>Other</option></select>
+    </div>
+    <div style="margin-bottom:1.5rem;">
+      <label style="font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);display:block;margin-bottom:10px;">Target Countries</label>
+      <div class="country-select-grid">
+        <div class="country-toggle" onclick="toggleCountry(this,'cn')"><span class="cflag">🇨🇳</span><span class="cname">China</span><div class="chk">✓</div></div>
+        <div class="country-toggle" onclick="toggleCountry(this,'kr')"><span class="cflag">🇰🇷</span><span class="cname">South Korea</span><div class="chk">✓</div></div>
+        <div class="country-toggle" onclick="toggleCountry(this,'it')"><span class="cflag">🇮🇹</span><span class="cname">Italy</span><div class="chk">✓</div></div>
+        <div class="country-toggle" onclick="toggleCountry(this,'de')"><span class="cflag">🇩🇪</span><span class="cname">Germany</span><div class="chk">✓</div></div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="createProfile()">Enter Dashboard →</button>
+  </div>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="screen-dashboard" class="screen">
+<div class="topbar">
+  <div class="topbar-brand">ScholarPath</div>
+  <div class="topbar-user"><span id="topbar-greeting" style="color:var(--muted);font-size:13px;"></span><div class="avatar" id="topbar-avatar">S</div></div>
+</div>
+<div class="dashboard-layout">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="ss-title">Navigate</div>
+      <div class="sidebar-item active" onclick="showPanel('overview')"><span class="icon">🏠</span> Overview</div>
+      <div class="sidebar-item" onclick="showPanel('documents')"><span class="icon">📁</span> Documents Checklist</div>
+      <div class="sidebar-item" onclick="showPanel('professor')"><span class="icon">📧</span> Professor Approach</div>
+      <div class="sidebar-item" onclick="showPanel('consultant')"><span class="icon">🎯</span> Consultant Guide</div>
+      <div class="sidebar-item" onclick="showPanel('timeline')"><span class="icon">📅</span> Timeline & Deadlines</div>
+      <div class="sidebar-item" onclick="showPanel('tips')"><span class="icon">💡</span> SOP Writing Guide</div>
+    </div>
+    <div class="sidebar-section">
+      <div class="ss-title">Countries</div>
+      <div class="cb" onclick="showPanel('china')"><div class="dot dot-cn"></div>🇨🇳 China</div>
+      <div class="cb" onclick="showPanel('korea')"><div class="dot dot-kr"></div>🇰🇷 South Korea</div>
+      <div class="cb" onclick="showPanel('italy')"><div class="dot dot-it"></div>🇮🇹 Italy</div>
+      <div class="cb" onclick="showPanel('germany')"><div class="dot dot-de"></div>🇩🇪 Germany</div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+
+    <!-- OVERVIEW -->
+    <div class="panel active" id="panel-overview">
+      <h1 class="panel-title">Welcome, <span id="dash-name">Student</span> 👋</h1>
+      <p class="panel-sub">Your full-stack scholarship command center — portals, documents, professor emails, visas & AI advisor all in one place.</p>
+      <div class="pgrid" id="progress-cards"></div>
+      <div class="abox info"><span>💡</span><span><strong>Start Here:</strong> China & Korea offer the most seats for Pakistanis with full funding. Use <strong>Professor Approach</strong> for PhD apps. Use the 🤖 AI advisor (bottom-right) for quick answers. Each country panel has every portal, university table, and document requirement.</span></div>
+      <h2 class="sh2">🚀 Your 4-Step Journey</h2>
+      <div class="step-box"><div class="sn">1</div><div><h4>Choose Countries & Scholarships</h4><p>China & Korea are fully funded with the most Pakistani seats. Germany is tuition-free with DAAD stipend. Italy has very low tuition + DSU grants. Ideally apply to 2–3 countries simultaneously for best odds.</p></div></div>
+      <div class="step-box"><div class="sn">2</div><div><h4>Start Documents 4–6 Months Early</h4><p>HEC attestation: 4–8 weeks. APS Germany: 6–8 weeks. IBCC: 4–6 weeks. Italian DoV: 4–8 weeks. MOFA: 1–2 weeks. Never start in the final month. Check the Documents Checklist panel for every item.</p></div></div>
+      <div class="step-box"><div class="sn">3</div><div><h4>Contact Professors (PhD & MS Research)</h4><p>For China CSC University Track, DAAD Germany, and Korea KAIST/POSTECH, a professor's acceptance letter dramatically boosts your chances. See the 📧 Professor Approach panel for country-specific email templates.</p></div></div>
+      <div class="step-box"><div class="sn">4</div><div><h4>Apply on Official Portals & Follow Up</h4><p>Apply only through official portals listed in each country section. Submit to 2–3 universities per country. Apply to 6–10 total scholarships. Follow up with embassies 2 weeks after submission.</p></div></div>
+      <div class="abox warn"><span>⚠️</span><span><strong>Key 2025–2026 Deadlines:</strong> CSC China: ~March 31, 2026 | GKS Korea Embassy: Oct–Nov 2025 | DAAD Germany: Oct–Nov 2025 | MAECI Italy: Feb–Mar 2026 | ANSO/HEC China: Jan 2026 | Korea Univ Track: Feb–Mar 2026</span></div>
+    </div>
+
+    <!-- CHINA -->
+    <div class="panel" id="panel-china">
+      <div class="cph"><div class="cfb">🇨🇳</div><div><h1 class="panel-title" style="margin-bottom:.25rem;">China Scholarships — Full Guide</h1><p style="color:var(--muted);font-size:.9rem;">Largest scholarship provider for Pakistanis — 10,000+ seats yearly, multiple tracks, CPEC advantage, very welcoming to Pakistani students</p></div></div>
+      <div class="abox success"><span>✅</span><span><strong>Pakistan–China Advantage:</strong> Due to CPEC, Pakistan gets a large CSC quota (~60–80 Embassy Track seats + unlimited University Track). Provincial, Confucius Institute, and ANSO scholarships are available in addition to CSC. Medicine (MBBS) in China is very popular and affordable for Pakistanis.</span></div>
+      <h2 class="sh2">🌟 All China Scholarship Types</h2>
+      <div class="sc">
+        <h3>1. CSC — Chinese Government Scholarship (中国政府奖学金) <span class="bdn">Most Popular</span></h3>
+        <div class="sc-meta"><span>🏛️ China Scholarship Council (CSC)</span><span>📅 January–March</span><span>💰 Fully Funded</span></div>
+        <div class="sc-tags"><div class="sc-tag">Tuition Waived</div><div class="sc-tag">Free Accommodation</div><div class="sc-tag">¥1,400/mo (BS)</div><div class="sc-tag">¥1,700/mo (MS)</div><div class="sc-tag">¥2,000–3,500/mo (PhD)</div><div class="sc-tag">Medical Insurance</div><div class="sc-tag">Settling Allowance ¥1,500</div></div>
+        <div class="sc-dl">📅 Portal Opens: January | Deadline: ~March 31 | Embassy Agency Code: 10001</div>
+        <div class="plinks"><a class="pl" href="https://studyinchina.csc.edu.cn" target="_blank">🌐 studyinchina.csc.edu.cn (Apply Here)</a><a class="pl" href="https://www.csc.edu.cn" target="_blank">🌐 csc.edu.cn (CSC Main)</a><a class="pl" href="https://pk.china-embassy.gov.cn" target="_blank">🏛️ Chinese Embassy Islamabad</a></div>
+      </div>
+      <div class="abox info"><span>ℹ️</span><span><strong>Two CSC Tracks:</strong> (A) <strong>Embassy Track</strong> — Apply at Chinese Embassy Islamabad, Agency Code 10001. ~60–80 Pakistan seats/year. Hard competition. (B) <strong>University Track</strong> — Apply directly to Chinese universities with CSC quota. More seats, flexible. Best for PhD applicants who contact professors first. Both give the same full scholarship.</span></div>
+      <div class="sc">
+        <h3>2. ANSO Scholarship (Chinese Academy of Sciences)</h3>
+        <div class="sc-meta"><span>🏛️ CAS / Alliance of International Science Organizations</span><span>📅 November–January</span><span>💰 Fully Funded</span></div>
+        <div class="sc-tags"><div class="sc-tag">PhD & Master's at CAS Institutes</div><div class="sc-tag">¥3,000–6,000/month</div><div class="sc-tag">Top STEM only</div><div class="sc-tag">HEC Nomination + Direct Apply</div></div>
+        <div class="sc-dl">📅 Apply via anso.org.cn AND hec.gov.pk — STEM fields only, strong research background required</div>
+        <div class="plinks"><a class="pl" href="https://www.anso.org.cn" target="_blank">🌐 anso.org.cn</a><a class="pl" href="https://hec.gov.pk" target="_blank">🌐 hec.gov.pk</a></div>
+      </div>
+      <div class="sc">
+        <h3>3. Confucius Institute (CI) Scholarship</h3>
+        <div class="sc-meta"><span>🏛️ Hanban / Chinese International Education Foundation</span><span>📅 December–April</span><span>💰 Partial to Full</span></div>
+        <div class="sc-tags"><div class="sc-tag">Chinese Language Programs</div><div class="sc-tag">1 Year or Full Degree</div><div class="sc-tag">Tuition + Accommodation + ¥1,400/mo</div><div class="sc-tag">HSK Required</div></div>
+        <div class="sc-dl">📅 Apply via cis.chinese.cn — available via CI campuses at NUML, UCP Pakistan</div>
+        <div class="plinks"><a class="pl" href="https://cis.chinese.cn" target="_blank">🌐 cis.chinese.cn (CI Scholarship Portal)</a></div>
+      </div>
+      <div class="sc">
+        <h3>4. Provincial Government Scholarships</h3>
+        <div class="sc-meta"><span>🏛️ Chinese Provincial Education Departments</span><span>💰 Partial to Full</span></div>
+        <div class="sc-tags"><div class="sc-tag">Beijing Gov Scholarship</div><div class="sc-tag">Guangdong Scholarship</div><div class="sc-tag">Shandong Scholarship</div><div class="sc-tag">Xinjiang Scholarship</div></div>
+        <div class="sc-dl">📅 Apply via each university's international office — deadlines vary March–June</div>
+        <div class="plinks"><a class="pl" href="https://www.campchina.com" target="_blank">🌐 campchina.com (Search by Province)</a></div>
+      </div>
+      <div class="sc">
+        <h3>5. University Merit Scholarships (Direct)</h3>
+        <div class="sc-meta"><span>🏛️ Individual Chinese Universities</span><span>💰 25%–100% Tuition Waiver + Stipend</span></div>
+        <div class="sc-tags"><div class="sc-tag">Separate from CSC</div><div class="sc-tag">Rolling Deadlines</div><div class="sc-tag">Apply Directly to University International Office</div></div>
+        <div class="sc-dl">📅 Apply via university international portal — typically November–April</div>
+      </div>
+      <h2 class="sh2">🏛️ Top Chinese Universities for Pakistanis</h2>
+      <div style="overflow-x:auto;"><table class="tbl">
+        <thead><tr><th>University</th><th>Ranking</th><th>Top Fields</th><th>CSC Quota</th><th>Portal</th></tr></thead>
+        <tbody>
+          <tr><td>Tsinghua University</td><td>#1 China</td><td>Engineering, CS, Business</td><td>Yes (Large)</td><td><span class="tlink" onclick="window.open('https://is.tsinghua.edu.cn','_blank')">is.tsinghua.edu.cn</span></td></tr>
+          <tr><td>Peking University</td><td>#2 China</td><td>Medicine, Law, Sciences</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.isd.pku.edu.cn','_blank')">isd.pku.edu.cn</span></td></tr>
+          <tr><td>Zhejiang University</td><td>#3 China</td><td>Engineering, Agriculture, Medicine</td><td>Yes (Large)</td><td><span class="tlink" onclick="window.open('https://www.intl.zju.edu.cn','_blank')">intl.zju.edu.cn</span></td></tr>
+          <tr><td>Shanghai Jiao Tong (SJTU)</td><td>#4 China</td><td>Engineering, CS, Finance</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.si.sjtu.edu.cn','_blank')">si.sjtu.edu.cn</span></td></tr>
+          <tr><td>USTC</td><td>Top 10</td><td>Physics, Chemistry, CS</td><td>Yes (ANSO)</td><td><span class="tlink" onclick="window.open('https://en.ustc.edu.cn','_blank')">en.ustc.edu.cn</span></td></tr>
+          <tr><td>HUST (Huazhong)</td><td>Top 15</td><td>Engineering, Medicine</td><td>Yes (Large)</td><td><span class="tlink" onclick="window.open('https://international.hust.edu.cn','_blank')">international.hust.edu.cn</span></td></tr>
+          <tr><td>China Agricultural University</td><td>Top Agri</td><td>Agriculture, Food Science</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://en.cau.edu.cn','_blank')">en.cau.edu.cn</span></td></tr>
+          <tr><td>Capital Medical University</td><td>Top Medical</td><td>MBBS, Medicine</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://english.ccmu.edu.cn','_blank')">english.ccmu.edu.cn</span></td></tr>
+        </tbody>
+      </table></div>
+      <h2 class="sh2">📋 China-Specific Documents & Visa</h2>
+      <div class="igrid">
+        <div class="ic"><h4>CSC Application Documents</h4><ul>
+          <li>CSC Online Form (studyinchina.csc.edu.cn)</li>
+          <li>Highest degree certificate (HEC + MOFA attested)</li>
+          <li>Transcripts (HEC + MOFA attested)</li>
+          <li>Foreigner Physical Examination Form (JW202)</li>
+          <li>2 Recommendation Letters (professor/employer)</li>
+          <li>Study Plan / Research Proposal (PhD mandatory)</li>
+          <li>Language proof: HSK 4+ (Chinese) or IELTS 6.0+ (English)</li>
+          <li>No-Criminal-Record Certificate (MOFA attested)</li>
+        </ul></div>
+        <div class="ic"><h4>X1 Student Visa Requirements</h4><ul>
+          <li>JW201 or JW202 admission notice from university</li>
+          <li>Acceptance letter from Chinese university</li>
+          <li>Physical exam form — from MOFA-approved hospital (PIMS Islamabad or Services Hospital Lahore)</li>
+          <li>Visa application at Chinese Embassy, Diplomatic Enclave, Islamabad</li>
+          <li>Bank statement (3 months, sufficient funds)</li>
+          <li>Return air ticket or itinerary</li>
+          <li>Accommodation proof in China</li>
+          <li>2 passport photos (white background)</li>
+        </ul></div>
+        <div class="ic"><h4>HSK Language Test</h4><ul>
+          <li>HSK 4 (B2 level) — required for Chinese-medium programs</li>
+          <li>HSK 5–6 — competitive universities in Chinese</li>
+          <li>English-medium: IELTS 6.0+ or TOEFL 80+</li>
+          <li>Many CSC programs are English-medium (no HSK needed)</li>
+          <li>Register: hsk.neea.cn — test centers in Lahore, Islamabad, Karachi</li>
+        </ul></div>
+        <div class="ic"><h4>Key Tips for China</h4><ul>
+          <li>Apply to 3–5 Chinese universities simultaneously on CSC portal</li>
+          <li>Contact professor BEFORE CSC submission — boosts chances hugely</li>
+          <li>MBBS: many Chinese medical universities accept Pakistani students directly</li>
+          <li>Chinese Embassy Islamabad: 051-2076714</li>
+          <li>Facebook: "CSC Scholarship Pakistan" — 80,000+ members</li>
+          <li>campchina.com is a useful resource for listings</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <!-- KOREA -->
+    <div class="panel" id="panel-korea">
+      <div class="cph"><div class="cfb">🇰🇷</div><div><h1 class="panel-title" style="margin-bottom:.25rem;">South Korea Scholarships — Full Guide</h1><p style="color:var(--muted);font-size:.9rem;">Fully funded GKS scholarship, world-class engineering universities, strong tech sector, growing Pakistani student community</p></div></div>
+      <div class="abox success"><span>✅</span><span><strong>Korea Advantage:</strong> GKS includes Korean language training, round-trip airfare, tuition, accommodation + ₩900,000/month stipend — one of the world's most generous. Pakistan quota: ~15–20 seats/year (Embassy + University tracks combined). TOPIK score significantly boosts your application.</span></div>
+      <h2 class="sh2">🌟 All Korea Scholarship Types</h2>
+      <div class="sc">
+        <h3>1. GKS — Global Korea Scholarship (한국정부초청장학금) <span class="bdn">Flagship</span></h3>
+        <div class="sc-meta"><span>🏛️ NIIED (National Institute for International Education)</span><span>📅 Two Tracks</span><span>💰 Fully Funded</span></div>
+        <div class="sc-tags"><div class="sc-tag">Tuition Covered</div><div class="sc-tag">₩900,000–1,000,000/month</div><div class="sc-tag">Round-trip Airfare</div><div class="sc-tag">Medical Insurance</div><div class="sc-tag">1-Year Korean Language Training</div><div class="sc-tag">Settlement Allowance ₩200,000</div></div>
+        <div class="sc-dl">📅 Embassy Track: Sep–Oct | University Track: Feb–Mar | Apply: studyinkorea.go.kr</div>
+        <div class="plinks"><a class="pl" href="https://www.studyinkorea.go.kr" target="_blank">🌐 studyinkorea.go.kr (Apply Here)</a><a class="pl" href="https://www.niied.go.kr" target="_blank">🌐 niied.go.kr (NIIED)</a><a class="pl" href="https://pk.mofa.go.kr" target="_blank">🏛️ Korean Embassy Islamabad</a></div>
+      </div>
+      <div class="abox info"><span>ℹ️</span><span><strong>GKS Two Tracks:</strong> (A) <strong>Embassy Track</strong> — Apply at Korean Embassy Islamabad (051-2279380). Pakistan quota: ~5–7 seats. Very competitive. Oct–Nov deadline. (B) <strong>University Track</strong> — Apply to GKS-designated Korean universities (200+). Each university has own quota. Feb–Mar deadline. More seats overall. Pick 3 universities to apply to. University Track is recommended for most Pakistani students.</span></div>
+      <div class="sc">
+        <h3>2. KAIST & POSTECH Research Fellowships</h3>
+        <div class="sc-meta"><span>🏛️ KAIST / POSTECH (Top Tech Universities)</span><span>💰 Fully Funded + Research Stipend</span></div>
+        <div class="sc-tags"><div class="sc-tag">MS & PhD</div><div class="sc-tag">₩1,000,000–1,500,000/month</div><div class="sc-tag">Research Assistant Position</div><div class="sc-tag">Professor Contact Required First</div></div>
+        <div class="sc-dl">📅 Apply directly to lab — rolling basis. Contact professor first, then formal application.</div>
+        <div class="plinks"><a class="pl" href="https://admission.postech.ac.kr" target="_blank">🌐 POSTECH Admissions</a><a class="pl" href="https://admissions.kaist.ac.kr" target="_blank">🌐 KAIST Admissions</a></div>
+      </div>
+      <div class="sc">
+        <h3>3. Seoul National University (SNU) Scholarships</h3>
+        <div class="sc-meta"><span>🏛️ Seoul National University — #1 Korea</span><span>💰 GKS + University Merit Awards</span></div>
+        <div class="sc-tags"><div class="sc-tag">All Fields</div><div class="sc-tag">GKS University Track Available</div><div class="sc-tag">Research Grants</div></div>
+        <div class="sc-dl">📅 en.snu.ac.kr/apply — September & February intakes</div>
+        <div class="plinks"><a class="pl" href="https://en.snu.ac.kr" target="_blank">🌐 en.snu.ac.kr</a></div>
+      </div>
+      <div class="sc">
+        <h3>4. Yonsei, Korea University, SKKU Scholarships</h3>
+        <div class="sc-meta"><span>🏛️ SKY Universities + Sungkyunkwan</span><span>💰 Partial to Full</span></div>
+        <div class="sc-tags"><div class="sc-tag">Yonsei International Scholarship</div><div class="sc-tag">Korea Univ. Global Scholarship</div><div class="sc-tag">SKKU Samsung Scholarship</div></div>
+        <div class="sc-dl">📅 Each has own portal — check dates Nov–Feb</div>
+        <div class="plinks"><a class="pl" href="https://international.yonsei.ac.kr" target="_blank">🌐 Yonsei</a><a class="pl" href="https://os.korea.ac.kr" target="_blank">🌐 Korea Univ.</a><a class="pl" href="https://www.skku.edu/eng" target="_blank">🌐 SKKU</a></div>
+      </div>
+      <h2 class="sh2">🏛️ Top Korean Universities for Pakistani Students</h2>
+      <div style="overflow-x:auto;"><table class="tbl">
+        <thead><tr><th>University</th><th>City</th><th>Top Fields</th><th>GKS Designated</th><th>Portal</th></tr></thead>
+        <tbody>
+          <tr><td>Seoul National University (SNU)</td><td>Seoul</td><td>All fields, Medicine</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://en.snu.ac.kr','_blank')">en.snu.ac.kr</span></td></tr>
+          <tr><td>KAIST</td><td>Daejeon</td><td>Engineering, CS, Physics</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://admissions.kaist.ac.kr','_blank')">admissions.kaist.ac.kr</span></td></tr>
+          <tr><td>POSTECH</td><td>Pohang</td><td>Science, Engineering</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://admission.postech.ac.kr','_blank')">admission.postech.ac.kr</span></td></tr>
+          <tr><td>Yonsei University</td><td>Seoul</td><td>Business, Medicine, Liberal Arts</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://international.yonsei.ac.kr','_blank')">international.yonsei.ac.kr</span></td></tr>
+          <tr><td>Korea University</td><td>Seoul</td><td>Law, Business, Engineering</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://os.korea.ac.kr','_blank')">os.korea.ac.kr</span></td></tr>
+          <tr><td>SKKU (Sungkyunkwan)</td><td>Suwon/Seoul</td><td>Engineering, Business</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.skku.edu/eng','_blank')">skku.edu/eng</span></td></tr>
+          <tr><td>Hanyang University</td><td>Seoul</td><td>Engineering, Architecture</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.hanyang.ac.kr/web/eng','_blank')">hanyang.ac.kr</span></td></tr>
+        </tbody>
+      </table></div>
+      <h2 class="sh2">📋 Korea-Specific Documents & Visa</h2>
+      <div class="igrid">
+        <div class="ic"><h4>GKS Application Documents</h4><ul>
+          <li>GKS Application Form (download: niied.go.kr)</li>
+          <li>Self-Introduction & Study Plan (GKS format)</li>
+          <li>2 Recommendation Letters (official letterhead + stamp)</li>
+          <li>All degrees (HEC attested + MOFA + Korean Embassy legalization)</li>
+          <li>TOPIK score (optional Embassy, helpful University track)</li>
+          <li>IELTS/TOEFL or English proficiency proof</li>
+          <li>Research Proposal (PhD applicants)</li>
+          <li>Applicant Agreement and Pledge (GKS form)</li>
+        </ul></div>
+        <div class="ic"><h4>D-2 Student Visa Requirements</h4><ul>
+          <li>Apply at Korean Embassy, Diplomatic Enclave, Islamabad</li>
+          <li>University acceptance letter</li>
+          <li>Bank statement (min. $1,500 USD equivalent)</li>
+          <li>Medical certificate from approved hospital</li>
+          <li>GKS award letter (replaces bank statement if GKS awarded)</li>
+          <li>TOPIK score (if available)</li>
+          <li>Passport valid 2+ years</li>
+          <li>Visa fee: ~PKR 12,000 | Processing: 3–5 weeks</li>
+        </ul></div>
+        <div class="ic"><h4>TOPIK Language Test</h4><ul>
+          <li>TOPIK 1 (Levels 1–2): Beginner — helpful for university track</li>
+          <li>TOPIK 2 (Levels 3–6): Advanced — needed for Korean-medium programs</li>
+          <li>Level 3+ gives big advantage in GKS Embassy Track</li>
+          <li>GKS includes 1 year FREE Korean language training anyway</li>
+          <li>Register: topik.go.kr — held 2x/year in Pakistan (ISB, LHR, KHI)</li>
+        </ul></div>
+        <div class="ic"><h4>Key Tips for Korea</h4><ul>
+          <li>Korean Embassy Islamabad: 051-2279380</li>
+          <li>Pakistan Embassy Seoul: +82-2-3789-2965</li>
+          <li>University Track = much better odds than Embassy Track for most</li>
+          <li>Contact KAIST/POSTECH professors directly for PhD — see Professor panel</li>
+          <li>studyinkorea.go.kr has full GKS-designated university list</li>
+          <li>Facebook: "GKS Scholarship Pakistan" — 30,000+ members</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <!-- ITALY -->
+    <div class="panel" id="panel-italy">
+      <div class="cph"><div class="cfb">🇮🇹</div><div><h1 class="panel-title" style="margin-bottom:.25rem;">Italy Scholarships — Full Guide</h1><p style="color:var(--muted);font-size:.9rem;">Europe's most underrated destination — very low or zero tuition, top engineering schools, DSU grants, Mediterranean lifestyle</p></div></div>
+      <div class="abox success"><span>✅</span><span><strong>Italy Advantage:</strong> Italian public universities charge €0–€3,500/year (income-based). DSU scholarship can cover tuition + accommodation + living allowance. Politecnico di Milano and Torino are world-class engineering schools. Many English-medium programs available at MSc level.</span></div>
+      <h2 class="sh2">🌟 All Italy Scholarship Types</h2>
+      <div class="sc">
+        <h3>1. MAECI Scholarships — Italian Government <span class="bdn">Govt Funded</span></h3>
+        <div class="sc-meta"><span>🏛️ Ministry of Foreign Affairs & International Cooperation</span><span>📅 February–March</span><span>💰 €900/month stipend</span></div>
+        <div class="sc-tags"><div class="sc-tag">Masters & PhD</div><div class="sc-tag">Short-term Research Available</div><div class="sc-tag">Apply via Italian Embassy Islamabad</div><div class="sc-tag">Tuition Waived at Host Uni</div></div>
+        <div class="sc-dl">📅 Apply through Italian Embassy Islamabad: February–March annually</div>
+        <div class="plinks"><a class="pl" href="https://esteri.it/en" target="_blank">🌐 esteri.it (MAECI Portal)</a><a class="pl" href="https://www.ambislamabad.esteri.it" target="_blank">🏛️ Italian Embassy Islamabad</a></div>
+      </div>
+      <div class="sc">
+        <h3>2. DSU Regional Scholarships (Merit + Need Based) <span class="bdn">Most Awards</span></h3>
+        <div class="sc-meta"><span>🏛️ Regional Government DSU Offices</span><span>📅 After university enrollment (July–November)</span><span>💰 €2,000–€6,000/year</span></div>
+        <div class="sc-tags"><div class="sc-tag">Tuition Exemption</div><div class="sc-tag">Living Allowance</div><div class="sc-tag">Accommodation Assistance</div><div class="sc-tag">Meal Vouchers</div><div class="sc-tag">Merit + Need Based</div></div>
+        <div class="sc-dl">📅 Apply AFTER enrolling at Italian university — September to November. Requires ISEE/ISEEU income declaration.</div>
+        <div class="plinks"><a class="pl" href="https://www.er-go.it" target="_blank">🌐 er-go.it (Bologna DSU)</a><a class="pl" href="https://www.dsu.toscana.it" target="_blank">🌐 DSU Toscana</a><a class="pl" href="https://www.edisu.piemonte.it" target="_blank">🌐 EDISU Piemonte (Turin)</a></div>
+      </div>
+      <div class="sc">
+        <h3>3. Politecnico di Milano — Excellence Scholarship</h3>
+        <div class="sc-meta"><span>🏛️ PoliMi — #1 Engineering in Italy</span><span>💰 Tuition waiver + up to €11,000/year</span></div>
+        <div class="sc-tags"><div class="sc-tag">Engineering, Architecture, Design</div><div class="sc-tag">Merit Based</div><div class="sc-tag">Very Competitive</div></div>
+        <div class="sc-dl">📅 Apply before January 31 for April intake — polimi.it/international</div>
+        <div class="plinks"><a class="pl" href="https://www.polimi.it/en/international-prospective-students" target="_blank">🌐 polimi.it International</a></div>
+      </div>
+      <div class="sc">
+        <h3>4. Politecnico di Torino — PIC International Fellowship</h3>
+        <div class="sc-meta"><span>🏛️ PoliTo — Top Engineering University</span><span>💰 €8,000/year</span></div>
+        <div class="sc-tags"><div class="sc-tag">PIC Scholarship</div><div class="sc-tag">Engineering, Architecture</div><div class="sc-tag">December–February deadline</div></div>
+        <div class="sc-dl">📅 Apply at polito.it — PIC (Politecnico International Cooperation) scholarship. Deadline: December–February.</div>
+        <div class="plinks"><a class="pl" href="https://www.polito.it/en/international" target="_blank">🌐 polito.it International</a></div>
+      </div>
+      <div class="sc">
+        <h3>5. University of Bologna — Study Grant</h3>
+        <div class="sc-meta"><span>🏛️ Oldest University in the World</span><span>💰 €11,059/year merit grant</span></div>
+        <div class="sc-tags"><div class="sc-tag">All Fields</div><div class="sc-tag">Multiple Campuses</div><div class="sc-tag">November–January deadline</div></div>
+        <div class="sc-dl">📅 Apply at unibo.it — Deadline November–January for September intake</div>
+        <div class="plinks"><a class="pl" href="https://www.unibo.it/en/international" target="_blank">🌐 unibo.it International</a></div>
+      </div>
+      <h2 class="sh2">🏛️ Top Italian Universities for Pakistani Students</h2>
+      <div style="overflow-x:auto;"><table class="tbl">
+        <thead><tr><th>University</th><th>City</th><th>Top Fields</th><th>English Programs</th><th>Portal</th></tr></thead>
+        <tbody>
+          <tr><td>Politecnico di Milano</td><td>Milan</td><td>Engineering, Architecture, Design</td><td>Yes (MSc)</td><td><span class="tlink" onclick="window.open('https://www.polimi.it/en','_blank')">polimi.it</span></td></tr>
+          <tr><td>Politecnico di Torino</td><td>Turin</td><td>Engineering, Architecture</td><td>Yes (MSc)</td><td><span class="tlink" onclick="window.open('https://www.polito.it/en','_blank')">polito.it</span></td></tr>
+          <tr><td>University of Bologna</td><td>Bologna</td><td>All fields, Medicine, Law</td><td>Yes (some)</td><td><span class="tlink" onclick="window.open('https://www.unibo.it/en','_blank')">unibo.it</span></td></tr>
+          <tr><td>Sapienza Univ. of Rome</td><td>Rome</td><td>Engineering, Medicine, Humanities</td><td>Yes (some)</td><td><span class="tlink" onclick="window.open('https://www.uniroma1.it/en','_blank')">uniroma1.it</span></td></tr>
+          <tr><td>University of Milan</td><td>Milan</td><td>Medicine, Science, Law</td><td>Yes (some)</td><td><span class="tlink" onclick="window.open('https://www.unimi.it/en','_blank')">unimi.it</span></td></tr>
+          <tr><td>University of Padua</td><td>Padua</td><td>Science, Medicine, Engineering</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.unipd.it/en','_blank')">unipd.it</span></td></tr>
+        </tbody>
+      </table></div>
+      <div class="plinks" style="margin-bottom:1.5rem;"><a class="pl" href="https://www.universitaly.it" target="_blank">🌐 universitaly.it (All Italian Universities)</a><a class="pl" href="https://www.study-in-italy.it" target="_blank">🌐 study-in-italy.it</a></div>
+      <h2 class="sh2">📋 Italy-Specific Documents & Visa</h2>
+      <div class="igrid">
+        <div class="ic"><h4>🔴 Declaration of Value (DoV) — Critical</h4><ul>
+          <li>Called "Dichiarazione di Valore" in Italian</li>
+          <li>Issued ONLY by Italian Embassy Islamabad</li>
+          <li>Verifies your Pakistani degree meets Italian standard</li>
+          <li>Apply at Italian Embassy 2–3 months before deadline</li>
+          <li>Cost: ~PKR 15,000–20,000 | Takes 4–8 weeks</li>
+          <li>Without DoV = Italian visa REJECTED. This is non-negotiable.</li>
+        </ul></div>
+        <div class="ic"><h4>Application Documents</h4><ul>
+          <li>Declaration of Value (DoV) — from Italian Embassy Islamabad</li>
+          <li>Degrees (HEC + MOFA + Italian Embassy legalized)</li>
+          <li>Transcripts (translated to English/Italian, legalized)</li>
+          <li>IELTS 6.0+ or Italian B2 (CILS/PLIDA certificates)</li>
+          <li>ISEE/ISEEU income declaration (for DSU scholarship)</li>
+          <li>SOP / Motivation Letter (800–1,200 words)</li>
+          <li>2 Recommendation Letters</li>
+        </ul></div>
+        <div class="ic"><h4>Type D Student Visa</h4><ul>
+          <li>Apply at Italian Embassy Islamabad (by appointment only)</li>
+          <li>Italian Embassy: +92-51-2278740</li>
+          <li>University enrollment letter (LoA)</li>
+          <li>Proof of accommodation in Italy</li>
+          <li>Bank statement: min €6,079/year (or scholarship letter)</li>
+          <li>Travel insurance valid for Schengen</li>
+          <li>Declaration of Value (DoV)</li>
+          <li>Processing time: 4–8 weeks</li>
+        </ul></div>
+        <div class="ic"><h4>Key Tips for Italy</h4><ul>
+          <li>Start DoV process 3–4 months before any deadline — it is the bottleneck</li>
+          <li>Apply to 3–4 Italian universities simultaneously for more options</li>
+          <li>Low tuition + DSU = effectively free education for low-income families</li>
+          <li>Politecnico di Torino is very accessible with IELTS 6.0+</li>
+          <li>Italian Embassy Islamabad: 051-2278740</li>
+          <li>Facebook: "Pakistani Students in Italy" — active community</li>
+        </ul></div>
+      </div>
+    </div>
+
+    <!-- GERMANY -->
+    <div class="panel" id="panel-germany">
+      <div class="cph"><div class="cfb">🇩🇪</div><div><h1 class="panel-title" style="margin-bottom:.25rem;">Germany Scholarships — Full Guide</h1><p style="color:var(--muted);font-size:.9rem;">Zero tuition at public universities, world-class engineering & research, DAAD is Europe's largest scholarship organization</p></div></div>
+      <div class="abox success"><span>✅</span><span><strong>Germany Advantage:</strong> Public German universities charge only a semester fee (~€150–350). No tuition! DAAD provides stipend on top. APS Certificate is MANDATORY for Pakistani applicants — start 2 months early. Fully English-medium MSc programs widely available at TUM, KIT, RWTH, TU Berlin.</span></div>
+      <h2 class="sh2">🌟 All Germany Scholarship Types</h2>
+      <div class="sc">
+        <h3>1. DAAD Scholarship <span class="bdn">Most Prestigious</span></h3>
+        <div class="sc-meta"><span>🏛️ German Academic Exchange Service</span><span>📅 August–November</span><span>💰 €861–1,200/month stipend</span></div>
+        <div class="sc-tags"><div class="sc-tag">Masters & PhD</div><div class="sc-tag">Monthly Stipend</div><div class="sc-tag">Travel Allowance</div><div class="sc-tag">Health Insurance</div><div class="sc-tag">Rent Subsidy</div><div class="sc-tag">Tuition Fees Covered</div></div>
+        <div class="sc-dl">📅 Most DAAD deadlines: October–November for following year | Apply: portal.daad.de</div>
+        <div class="plinks"><a class="pl" href="https://www.daad.de/en" target="_blank">🌐 daad.de (DAAD Main)</a><a class="pl" href="https://portal.daad.de" target="_blank">🌐 portal.daad.de (Apply Here)</a><a class="pl" href="https://www.daad.pk" target="_blank">🌐 daad.pk (Pakistan Office)</a></div>
+      </div>
+      <div class="abox info"><span>ℹ️</span><span><strong>DAAD Programs for Pakistan:</strong> (1) DAAD Development-Related Postgraduate Courses — for dev-related MS degrees, €850/mo. (2) DAAD Research Grants — doctoral researchers, €1,200/mo. (3) HEC–DAAD Joint PhD — Pakistan-specific quota, apply via hec.gov.pk. All require IELTS 6.0+ and strong academic record. Professor support letter = key requirement.</span></div>
+      <div class="sc">
+        <h3>2. HEC–DAAD Joint Scholarship (Pakistan-Specific)</h3>
+        <div class="sc-meta"><span>🏛️ HEC Pakistan + DAAD Germany</span><span>📅 January–March</span><span>💰 Fully Funded</span></div>
+        <div class="sc-tags"><div class="sc-tag">PhD & Postdoc Priority</div><div class="sc-tag">Pakistani Citizens Only</div><div class="sc-tag">Apply via HEC Portal</div><div class="sc-tag">Professor Acceptance Required</div></div>
+        <div class="sc-dl">📅 Apply at hec.gov.pk — January to March. Must have professor acceptance from German university.</div>
+        <div class="plinks"><a class="pl" href="https://hec.gov.pk" target="_blank">🌐 hec.gov.pk (Apply Here)</a></div>
+      </div>
+      <div class="sc">
+        <h3>3. Deutschlandstipendium</h3>
+        <div class="sc-meta"><span>🏛️ Federal Government + Private Sponsors</span><span>💰 €300/month</span></div>
+        <div class="sc-tags"><div class="sc-tag">For Enrolled Students in Germany</div><div class="sc-tag">Merit Based</div><div class="sc-tag">Apply at Host University</div></div>
+        <div class="sc-dl">📅 Apply after enrolling at German university — timing varies by university (typically Jan–Mar)</div>
+        <div class="plinks"><a class="pl" href="https://www.deutschlandstipendium.de/en" target="_blank">🌐 deutschlandstipendium.de</a></div>
+      </div>
+      <div class="sc">
+        <h3>4. German Political Foundation Scholarships</h3>
+        <div class="sc-meta"><span>🏛️ Heinrich Böll / Friedrich Ebert / Konrad Adenauer Foundations</span><span>💰 €861–934/month</span></div>
+        <div class="sc-tags"><div class="sc-tag">Heinrich Böll (Green Politics)</div><div class="sc-tag">Friedrich Ebert (Social Democrat)</div><div class="sc-tag">Konrad Adenauer (Conservative)</div><div class="sc-tag">Civic Engagement Required</div></div>
+        <div class="sc-dl">📅 Apply directly at each foundation's website — requires strong extracurriculars & civic engagement</div>
+        <div class="plinks"><a class="pl" href="https://www.boell.de/en" target="_blank">🌐 Heinrich Böll</a><a class="pl" href="https://www.fes.de/en" target="_blank">🌐 Friedrich Ebert</a><a class="pl" href="https://www.kas.de/en" target="_blank">🌐 Konrad Adenauer</a></div>
+      </div>
+      <h2 class="sh2">🏛️ Top German Universities for Pakistani Students</h2>
+      <div style="overflow-x:auto;"><table class="tbl">
+        <thead><tr><th>University</th><th>City</th><th>Top Fields</th><th>English Programs</th><th>Portal</th></tr></thead>
+        <tbody>
+          <tr><td>TU Munich (TUM)</td><td>Munich</td><td>Engineering, CS, Business</td><td>Yes (Many MSc)</td><td><span class="tlink" onclick="window.open('https://www.tum.de/en','_blank')">tum.de</span></td></tr>
+          <tr><td>LMU Munich</td><td>Munich</td><td>Medicine, Science, Humanities</td><td>Some</td><td><span class="tlink" onclick="window.open('https://www.lmu.de/en','_blank')">lmu.de</span></td></tr>
+          <tr><td>KIT (Karlsruhe)</td><td>Karlsruhe</td><td>Engineering, Physics, CS</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.kit.edu/english','_blank')">kit.edu</span></td></tr>
+          <tr><td>RWTH Aachen</td><td>Aachen</td><td>Mechanical/Electrical Eng.</td><td>Yes (MSc)</td><td><span class="tlink" onclick="window.open('https://www.rwth-aachen.de','_blank')">rwth-aachen.de</span></td></tr>
+          <tr><td>TU Berlin</td><td>Berlin</td><td>Engineering, CS, Urban Planning</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.tu.berlin/en','_blank')">tu.berlin</span></td></tr>
+          <tr><td>Heidelberg University</td><td>Heidelberg</td><td>Medicine, Natural Sciences</td><td>Some</td><td><span class="tlink" onclick="window.open('https://www.uni-heidelberg.de/en','_blank')">uni-heidelberg.de</span></td></tr>
+          <tr><td>Free University Berlin (FU)</td><td>Berlin</td><td>Social Sciences, Politics</td><td>Yes</td><td><span class="tlink" onclick="window.open('https://www.fu-berlin.de/en','_blank')">fu-berlin.de</span></td></tr>
+        </tbody>
+      </table></div>
+      <h2 class="sh2">📋 Germany-Specific Documents & Visa</h2>
+      <div class="igrid">
+        <div class="ic"><h4>🔴 APS Certificate — MANDATORY</h4><ul>
+          <li>APS = Akademische Prüfstelle (German Academic Evaluation Centre)</li>
+          <li>Required for ALL Pakistani applicants to German universities</li>
+          <li>Apply at German Embassy Islamabad — APS Department</li>
+          <li>Website: aps-pakistan.de | Phone: +92-51-2279430</li>
+          <li>Takes 6–8 weeks | Fee: ~€200</li>
+          <li>Bring original documents for in-person verification</li>
+          <li>Without APS = German universities WILL NOT process your application</li>
+        </ul></div>
+        <div class="ic"><h4>National (D) Visa Requirements</h4><ul>
+          <li>APS Certificate (mandatory)</li>
+          <li>University admission or conditional admission letter</li>
+          <li>Blocked account (Sperrkonto): €11,208/year deposited</li>
+          <li>Health insurance valid in Germany (TK, AOK, Barmer)</li>
+          <li>German B1/B2 or IELTS 6.0+ (English-medium programs)</li>
+          <li>DAAD award letter replaces blocked account requirement</li>
+          <li>Apply at German Embassy Islamabad — 8–12 weeks processing</li>
+        </ul></div>
+        <div class="ic"><h4>German Language (TestDaF / DSH)</h4><ul>
+          <li>B1/B2 German required for German-medium programs</li>
+          <li>TestDaF: testdaf.de — international German proficiency exam</li>
+          <li>DSH: done at German universities after arrival</li>
+          <li>Goethe-Institut Pakistan: Karachi, Lahore, Islamabad — A1–C1 courses</li>
+          <li>TUM, KIT, RWTH Aachen, TU Berlin offer many English-medium MSc programs</li>
+          <li>Basic German (A2) helpful for daily life even in English programs</li>
+        </ul></div>
+        <div class="ic"><h4>Key Tips for Germany</h4><ul>
+          <li>Blocked account: open at Fintiba (fintiba.com) or Expatrio (expatrio.com) from Pakistan</li>
+          <li>anabin.kmk.org — check if your Pakistani university is Germany-recognized</li>
+          <li>Apply to 5+ German universities — most have rolling admissions online</li>
+          <li>German Embassy Islamabad: Street 1, Diplomatic Enclave, +92-51-2279430</li>
+          <li>Facebook: "Pakistani Students in Germany" — 20,000+ members</li>
+          <li>daad.de/en/study-and-research-in-germany — official study guide</li>
+        </ul></div>
+      </div>
+      <div class="plinks"><a class="pl" href="https://aps-pakistan.de" target="_blank">🌐 aps-pakistan.de (APS Certificate)</a><a class="pl" href="https://portal.daad.de" target="_blank">🌐 portal.daad.de</a><a class="pl" href="https://www.anabin.kmk.org" target="_blank">🌐 anabin.kmk.org (Degree Check)</a><a class="pl" href="https://www.fintiba.com" target="_blank">🌐 fintiba.com (Blocked Account)</a></div>
+    </div>
+
+    <!-- PROFESSOR APPROACH -->
+    <div class="panel" id="panel-professor">
+      <h1 class="panel-title">📧 How to Approach Professors</h1>
+      <p class="panel-sub">Country-specific email templates, timing strategy, and what to do when they don't reply</p>
+      <div class="abox success"><span>✅</span><span><strong>Why Professor Contact Matters:</strong> For PhD in China (CSC University Track), Germany (DAAD), and Korea (KAIST/POSTECH), a professor's acceptance letter can make or break your application. Even for Master's, it signals genuine interest. 70% of PhD acceptances begin with a cold email sent correctly.</span></div>
+      <h2 class="sh2">🗂️ Before You Email — Prepare This</h2>
+      <div class="igrid">
+        <div class="ic"><h4>Research the Professor First</h4><ul>
+          <li>Go to faculty page → find professors in your exact research area</li>
+          <li>Read their latest 2–3 publications on Google Scholar or ResearchGate</li>
+          <li>Check if they have open positions on their lab/personal page</li>
+          <li>Note their research group name and recent grants</li>
+          <li>Never email a retired professor or one who
