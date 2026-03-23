@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScholarPath — Pakistan Scholarship Consultant</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,300;1,9..144,700&family=Cabinet+Grotesk:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS — Premium Dark Editorial
+═══════════════════════════════════════════ */
+:root {
+  --bg:       #080810;
+  --bg1:      #0e0e1a;
+  --bg2:      #141422;
+  --bg3:      #1a1a2e;
+  --glass:    rgba(255,255,255,0.03);
+  --glass2:   rgba(255,255,255,0.06);
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.12);
+  --txt:      #f0f0fa;
+  --txt2:     #a0a0c0;
+  --txt3:     #606080;
+  --gold:     #d4a843;
+  --gold2:    #f0c060;
+  --gold-g:   linear-gradient(135deg,#d4a843,#f0c060,#d4a843);
+  --kr:       #ff6b6b;
+  --cn:       #ffa040;
+  --it:       #4ecb94;
+  --de:       #6b9fff;
+  --radius:   18px;
+  --radius-s: 10px;
+  --shadow:   0 24px 80px rgba(0,0,0,0.6);
+  --shadow-s: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+/* ═══════════════════════════════════════════ RESET */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:16px; }
+body {
+  font-family:'Cabinet Grotesk', sans-serif;
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+  cursor: default;
+}
+
+/* CUSTOM CURSOR */
+.cursor {
+  width:12px; height:12px;
+  background:var(--gold);
+  border-radius:50%;
+  position:fixed;
+  pointer-events:none;
+  z-index:9999;
+  transform:translate(-50%,-50%);
+  transition:transform 0.15s ease, width 0.2s, height 0.2s, opacity 0.2s;
+  mix-blend-mode:difference;
+}
+.cursor-ring {
+  width:36px; height:36px;
+  border:1px solid rgba(212,168,67,0.4);
+  border-radius:50%;
+  position:fixed;
+  pointer-events:none;
+  z-index:9998;
+  transform:translate(-50%,-50%);
+  transition:transform 0.35s cubic-bezier(0.23,1,0.32,1), width 0.3s, height 0.3s, opacity 0.3s;
+}
+body:has(button:hover) .cursor, body:has(a:hover) .cursor { width:20px; height:20px; opacity:0.8; }
+
+/* ═══════════════════════════════════════════ SCREENS */
+.screen { display:none; }
+.screen.active { display:flex; }
+
+/* ═══════════════════════════════════════════
+   WELCOME SCREEN
+═══════════════════════════════════════════ */
+#s-welcome {
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  position:relative;
+  overflow:hidden;
+  padding:2rem;
+  text-align:center;
+}
+
+/* Animated noise grain overlay */
+#s-welcome::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size:200px;
+  opacity:0.5;
+  pointer-events:none;
+  z-index:0;
+  animation:grainShift 0.5s steps(1) infinite;
+}
+@keyframes grainShift {
+  0%,100%{transform:translate(0,0);}
+  10%{transform:translate(-2%,-2%);}
+  20%{transform:translate(2%,-4%);}
+  30%{transform:translate(-4%,2%);}
+  40%{transform:translate(4%,4%);}
+  50%{transform:translate(-2%,6%);}
+  60%{transform:translate(6%,-2%);}
+  70%{transform:translate(-6%,4%);}
+  80%{transform:translate(2%,-6%);}
+  90%{transform:translate(-4%,-4%);}
+}
+
+/* Ambient orbs */
+.orb {
+  position:absolute;
+  border-radius:50%;
+  filter:blur(80px);
+  pointer-events:none;
+}
+.orb-1 { width:600px; height:600px; background:radial-gradient(circle,rgba(212,168,67,0.12),transparent 70%); top:-200px; left:-200px; animation:orbFloat 8s ease-in-out infinite; }
+.orb-2 { width:500px; height:500px; background:radial-gradient(circle,rgba(107,159,255,0.08),transparent 70%); bottom:-100px; right:-100px; animation:orbFloat 10s ease-in-out infinite reverse; }
+.orb-3 { width:400px; height:400px; background:radial-gradient(circle,rgba(78,203,148,0.06),transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); animation:orbPulse 6s ease-in-out infinite; }
+@keyframes orbFloat { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(30px,-30px) scale(1.05);} }
+@keyframes orbPulse { 0%,100%{opacity:0.5; transform:translate(-50%,-50%) scale(1);} 50%{opacity:1; transform:translate(-50%,-50%) scale(1.1);} }
+
+/* Grid lines bg */
+.grid-bg {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+  z-index:0;
+}
+
+.w-inner { position:relative; z-index:1; max-width:720px; }
+
+.w-eyebrow {
+  display:inline-flex; align-items:center; gap:10px;
+  border:1px solid rgba(212,168,67,0.25);
+  background:rgba(212,168,67,0.06);
+  border-radius:100px;
+  padding:7px 18px 7px 12px;
+  font-size:11.5px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+  color:var(--gold2);
+  margin-bottom:2.5rem;
+  animation:fadeSlideUp 1s cubic-bezier(0.23,1,0.32,1) both;
+}
+.w-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--gold2); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(0.8);} }
+
+.w-headline {
+  font-family:'Fraunces', serif;
+  font-size:clamp(3.5rem,9vw,7.5rem);
+  font-weight:900;
+  line-height:0.9;
+  letter-spacing:-4px;
+  margin-bottom:2rem;
+  animation:fadeSlideUp 1s cubic-bezier(0.23,1,0.32,1) 0.1s both;
+}
+.w-headline-line1 { display:block; color:var(--txt); }
+.w-headline-line2 {
+  display:block;
+  background:linear-gradient(135deg, #d4a843 0%, #f5d080 40%, #d4a843 60%, #ffe599 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+  background-size:200% 100%;
+  animation:shineText 4s ease-in-out infinite;
+}
+@keyframes shineText { 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+
+.w-sub {
+  color:var(--txt2);
+  font-size:1.1rem;
+  line-height:1.8;
+  max-width:520px;
+  margin:0 auto 3rem;
+  font-weight:300;
+  animation:fadeSlideUp 1s cubic-bezier(0.23,1,0.32,1) 0.2s both;
+}
+
+.w-countries {
+  display:flex; gap:0.6rem; justify-content:center; flex-wrap:wrap;
+  margin-bottom:3rem;
+  animation:fadeSlideUp 1s cubic-bezier(0.23,1,0.32,1) 0.3s both;
+}
+.w-ctry {
+  display:flex; align-items:center; gap:8px;
+  padding:9px 18px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:100px;
+  font-size:13px; font-weight:500;
+  backdrop-filter:blur(10px);
+  transition:all 0.25s cubic-bezier(0.23,1,0.32,1);
+  cursor:default;
+}
+.w-ctry:hover { background:var(--glass2); border-color:var(--border2); transform:translateY(-2px); }
+.w-ctry-flag { font-size:16px; }
+
+.w-cta {
+  display:inline-flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,#d4a843,#f0c060);
+  color:#0a0808;
+  border:none;
+  padding:17px 48px;
+  border-radius:100px;
+  font-family:'Cabinet Grotesk', sans-serif;
+  font-size:1rem;
+  font-weight:800;
+  letter-spacing:0.5px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:all 0.3s cubic-bezier(0.23,1,0.32,1);
+  animation:fadeSlideUp 1s cubic-bezier(0.23,1,0.32,1) 0.4s both;
+}
+.w-cta::before {
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.3),transparent);
+  transform:translateX(-100%) skewX(-15deg);
+  transition:transform 0.6s ease;
+}
+.w-cta:hover::before { transform:translateX(200%) skewX(-15deg); }
+.w-cta:hover { transform:scale(1.04) translateY(-2px); box-shadow:0 20px 60px rgba(212,168,67,0.4); }
+.w-cta-arrow { font-size:18px; transition:transform 0.3s; }
+.w-cta:hover .w-cta-arrow { transform:translateX(4px); }
+
+@keyframes fadeSlideUp {
+  from { opacity:0; transform:translateY(24px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   REGISTER SCREEN
+═══════════════════════════════════════════ */
+#s-register {
+  align-items:center; justify-content:center;
+  min-height:100vh;
+  padding:2rem;
+  background:var(--bg);
+  position:relative;
+  overflow:hidden;
+}
+#s-register .orb-1 { opacity:0.5; }
+
+.reg-card {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:3rem;
+  width:100%; max-width:560px;
+  position:relative; z-index:1;
+  box-shadow:var(--shadow);
+  animation:fadeSlideUp 0.6s cubic-bezier(0.23,1,0.32,1) both;
+}
+.reg-card::before {
+  content:'';
+  position:absolute; top:0; left:10%; right:10%; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,168,67,0.4),transparent);
+}
+
+.reg-step-bar {
+  display:flex; align-items:center; gap:8px; margin-bottom:2.5rem;
+}
+.reg-step { width:32px; height:3px; border-radius:2px; background:var(--bg3); transition:background 0.4s; }
+.reg-step.done { background:var(--gold); }
+.reg-step.active { background:var(--gold2); width:48px; }
+
+.reg-h1 {
+  font-family:'Fraunces', serif;
+  font-size:2rem; font-weight:700;
+  margin-bottom:0.4rem;
+  letter-spacing:-1px;
+}
+.reg-sub { color:var(--txt2); font-size:0.9rem; margin-bottom:2rem; line-height:1.6; }
+
+.fg { margin-bottom:1.2rem; }
+.fg label {
+  display:block;
+  font-size:11px; font-weight:700;
+  text-transform:uppercase; letter-spacing:1.5px;
+  color:var(--txt3); margin-bottom:7px;
+}
+.fg input, .fg select {
+  width:100%;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-s);
+  padding:13px 16px;
+  color:var(--txt);
+  font-family:'Cabinet Grotesk', sans-serif;
+  font-size:14.5px; font-weight:500;
+  outline:none;
+  transition:all 0.2s;
+  appearance:none;
+}
+.fg input:focus, .fg select:focus {
+  border-color:rgba(212,168,67,0.5);
+  background:var(--bg3);
+  box-shadow:0 0 0 3px rgba(212,168,67,0.08);
+}
+.fg input::placeholder { color:var(--txt3); }
+.fg select option { background:var(--bg2); }
+.fg-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+.ctry-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; margin-bottom:1.8rem; }
+.ctry-card {
+  position:relative;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-s);
+  padding:1.1rem;
+  cursor:pointer;
+  transition:all 0.25s cubic-bezier(0.23,1,0.32,1);
+  overflow:hidden;
+  text-align:center;
+  user-select:none;
+}
+.ctry-card::before {
+  content:'';
+  position:absolute; inset:0;
+  opacity:0;
+  transition:opacity 0.3s;
+}
+.ctry-card.kr-card::before { background:radial-gradient(circle at 50% 0%, rgba(255,107,107,0.15), transparent 70%); }
+.ctry-card.cn-card::before { background:radial-gradient(circle at 50% 0%, rgba(255,160,64,0.15), transparent 70%); }
+.ctry-card.it-card::before { background:radial-gradient(circle at 50% 0%, rgba(78,203,148,0.15), transparent 70%); }
+.ctry-card.de-card::before { background:radial-gradient(circle at 50% 0%, rgba(107,159,255,0.15), transparent 70%); }
+.ctry-card.selected::before { opacity:1; }
+.ctry-card.selected { border-color:rgba(212,168,67,0.4); background:rgba(212,168,67,0.05); }
+.ctry-card:hover { transform:translateY(-2px); border-color:var(--border2); }
+.ctry-card .check-badge {
+  position:absolute; top:8px; right:8px;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:800; color:transparent;
+  transition:all 0.25s;
+}
+.ctry-card.selected .check-badge { background:var(--gold); border-color:var(--gold); color:#000; }
+.ctry-card .c-flag { font-size:28px; display:block; margin-bottom:6px; position:relative; z-index:1; }
+.ctry-card .c-name { font-size:12.5px; font-weight:600; position:relative; z-index:1; }
+.ctry-card .c-sub { font-size:10px; color:var(--txt3); margin-top:2px; position:relative; z-index:1; }
+
+.btn-submit {
+  width:100%;
+  background:linear-gradient(135deg,#d4a843,#f0c060);
+  color:#0a0808;
+  border:none;
+  padding:15px;
+  border-radius:var(--radius-s);
+  font-family:'Cabinet Grotesk', sans-serif;
+  font-size:1rem; font-weight:800;
+  cursor:pointer;
+  position:relative; overflow:hidden;
+  transition:all 0.3s cubic-bezier(0.23,1,0.32,1);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.btn-submit:hover { transform:translateY(-1px); box-shadow:0 12px 40px rgba(212,168,67,0.35); }
+.btn-submit::after {
+  content:''; position:absolute;
+  width:100%; height:100%;
+  background:linear-gradient(rgba(255,255,255,0.15),transparent);
+  top:0; left:0; pointer-events:none;
+}
+
+/* ═══════════════════════════════════════════
+   APP SHELL
+═══════════════════════════════════════════ */
+#s-app {
+  flex-direction:column;
+  min-height:100vh;
+  background:var(--bg);
+}
+
+/* TOP NAV */
+.topnav {
+  position:sticky; top:0; z-index:200;
+  background:rgba(8,8,16,0.85);
+  backdrop-filter:blur(20px) saturate(1.5);
+  border-bottom:1px solid var(--border);
+  padding:0 2rem;
+  height:62px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.topnav::after {
+  content:'';
+  position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,168,67,0.2),transparent);
+}
+.nav-brand {
+  font-family:'Fraunces', serif;
+  font-size:1.35rem; font-weight:700;
+  letter-spacing:-0.5px;
+  display:flex; align-items:center; gap:8px;
+}
+.nav-brand-dot { width:8px; height:8px; border-radius:50%; background:var(--gold); animation:pulse 3s infinite; }
+.nav-right { display:flex; align-items:center; gap:1.5rem; }
+.nav-user { display:flex; align-items:center; gap:10px; }
+.nav-user-name { font-size:13px; color:var(--txt2); font-weight:500; }
+.nav-avatar {
+  width:34px; height:34px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Fraunces', serif;
+  font-size:14px; font-weight:700; color:#0a0808;
+  box-shadow:0 0 0 2px rgba(212,168,67,0.3);
+}
+.nav-badge {
+  padding:4px 12px;
+  background:rgba(212,168,67,0.1);
+  border:1px solid rgba(212,168,67,0.2);
+  border-radius:100px;
+  font-size:11px; font-weight:700;
+  color:var(--gold2); letter-spacing:1px;
+  text-transform:uppercase;
+}
+
+/* APP BODY */
+.app-body { display:flex; flex:1; min-height:calc(100vh - 62px); }
+
+/* SIDEBAR */
+.sidebar {
+  width:256px; flex-shrink:0;
+  background:var(--bg1);
+  border-right:1px solid var(--border);
+  position:sticky; top:62px;
+  height:calc(100vh - 62px);
+  overflow-y:auto;
+  padding:1.5rem 1rem;
+  display:flex; flex-direction:column; gap:0.25rem;
+  scrollbar-width:thin; scrollbar-color:var(--bg3) transparent;
+}
+
+.sb-section-label {
+  font-size:10.5px; font-weight:700;
+  text-transform:uppercase; letter-spacing:2px;
+  color:var(--txt3);
+  padding:0.5rem 0.75rem 0.3rem;
+  margin-top:0.5rem;
+}
+.sb-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 12px;
+  border-radius:var(--radius-s);
+  cursor:pointer;
+  font-size:13.5px; font-weight:500;
+  color:var(--txt2);
+  transition:all 0.2s;
+  border:1px solid transparent;
+  position:relative;
+  white-space:nowrap;
+  overflow:hidden;
+}
+.sb-item:hover { background:var(--glass); color:var(--txt); border-color:var(--border); }
+.sb-item.active {
+  background:rgba(212,168,67,0.08);
+  color:var(--gold2);
+  border-color:rgba(212,168,67,0.15);
+}
+.sb-item.active::before {
+  content:'';
+  position:absolute; left:0; top:20%; bottom:20%;
+  width:2px; border-radius:1px; background:var(--gold);
+}
+.sb-icon { width:18px; text-align:center; font-size:15px; flex-shrink:0; }
+.sb-pct {
+  margin-left:auto;
+  font-size:11px; font-weight:700;
+  opacity:0.7;
+}
+.sb-flag { font-size:14px; flex-shrink:0; }
+
+.sb-divider { height:1px; background:var(--border); margin:0.5rem 0.75rem; }
+
+/* COUNTRY SIDEBAR ITEM */
+.sb-ctry { display:flex; align-items:center; gap:10px; padding:8px 12px; border-radius:var(--radius-s); cursor:pointer; font-size:13px; font-weight:500; color:var(--txt2); transition:all 0.2s; border:1px solid transparent; }
+.sb-ctry:hover { background:var(--glass); color:var(--txt); }
+.sb-ctry.active { color:var(--txt); background:var(--glass2); border-color:var(--border); }
+.sb-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+/* MAIN CONTENT */
+.main { flex:1; overflow-y:auto; background:var(--bg); }
+.page-wrap { padding:2.5rem 2.5rem; max-width:1100px; }
+.page { display:none; animation:pageIn 0.35s cubic-bezier(0.23,1,0.32,1) both; }
+.page.active { display:block; }
+@keyframes pageIn { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:translateY(0);} }
+
+/* PAGE HEADER */
+.ph { margin-bottom:2.5rem; }
+.ph-eyebrow {
+  font-size:10.5px; font-weight:700;
+  text-transform:uppercase; letter-spacing:2px;
+  color:var(--gold2); margin-bottom:0.5rem;
+  display:flex; align-items:center; gap:8px;
+}
+.ph-eyebrow::before { content:''; display:block; width:16px; height:1px; background:var(--gold); }
+.ph h1 {
+  font-family:'Fraunces', serif;
+  font-size:2.4rem; font-weight:700;
+  letter-spacing:-1.5px; line-height:1;
+  margin-bottom:0.5rem;
+}
+.ph p { color:var(--txt2); font-size:0.95rem; line-height:1.7; font-weight:400; max-width:580px; }
+
+/* ── STAT CARDS ── */
+.stat-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:1rem; margin-bottom:2rem; }
+.stat-card {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.5rem 1.4rem;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.23,1,0.32,1);
+  position:relative; overflow:hidden;
+}
+.stat-card::after {
+  content:''; position:absolute;
+  top:-50%; left:-50%; width:200%; height:200%;
+  background:radial-gradient(circle at center, rgba(255,255,255,0.04), transparent 60%);
+  opacity:0; transition:opacity 0.3s;
+}
+.stat-card:hover { border-color:var(--border2); transform:translateY(-3px); box-shadow:var(--shadow-s); }
+.stat-card:hover::after { opacity:1; }
+.stat-line { position:absolute; top:0; left:0; right:0; height:2px; border-radius:2px 2px 0 0; }
+.stat-flag { font-size:22px; margin-bottom:0.7rem; }
+.stat-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:var(--txt3); margin-bottom:0.4rem; }
+.stat-value { font-family:'Fraunces', serif; font-size:2.4rem; font-weight:700; letter-spacing:-2px; line-height:1; }
+.stat-bar-track { height:3px; background:var(--bg3); border-radius:2px; margin-top:1rem; overflow:hidden; }
+.stat-bar { height:100%; border-radius:2px; transition:width 1s cubic-bezier(0.23,1,0.32,1); width:0%; }
+
+/* ── SECTION HEADER ── */
+.sec-h {
+  display:flex; align-items:center; gap:12px;
+  margin-bottom:1.2rem; margin-top:2rem;
+}
+.sec-h h2 { font-family:'Fraunces', serif; font-size:1.15rem; font-weight:700; letter-spacing:-0.5px; }
+.sec-h-line { flex:1; height:1px; background:linear-gradient(90deg,var(--border),transparent); }
+
+/* ── ALERT ── */
+.alert {
+  display:flex; align-items:flex-start; gap:12px;
+  padding:14px 18px;
+  border-radius:var(--radius-s);
+  margin-bottom:1.5rem;
+  font-size:13px; line-height:1.7; font-weight:400;
+  position:relative; overflow:hidden;
+}
+.alert::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:2px 0 0 2px; }
+.alert-warn { background:rgba(255,160,64,0.06); border:1px solid rgba(255,160,64,0.15); color:#ffa040; }
+.alert-warn::before { background:var(--cn); }
+.alert-info { background:rgba(107,159,255,0.06); border:1px solid rgba(107,159,255,0.15); color:var(--de); }
+.alert-info::before { background:var(--de); }
+.alert-success { background:rgba(78,203,148,0.06); border:1px solid rgba(78,203,148,0.15); color:var(--it); }
+.alert-success::before { background:var(--it); }
+.alert-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+
+/* ── GRID CARDS ── */
+.grid2 { display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:1rem; margin-bottom:1.5rem; }
+.info-card {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  transition:border-color 0.2s;
+}
+.info-card:hover { border-color:var(--border2); }
+.info-card h4 {
+  font-size:10.5px; font-weight:700;
+  text-transform:uppercase; letter-spacing:1.5px;
+  color:var(--gold2); margin-bottom:1.1rem;
+  display:flex; align-items:center; gap:8px;
+}
+.info-card ul { list-style:none; }
+.info-card li {
+  display:flex; gap:10px; align-items:flex-start;
+  font-size:13px; line-height:1.6; padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  color:var(--txt2);
+}
+.info-card li:last-child { border:none; }
+.info-card li::before { content:'›'; color:var(--gold); flex-shrink:0; font-size:14px; line-height:1.5; }
+
+/* ── CHECKLIST BLOCKS ── */
+.cl-group {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  margin-bottom:1rem;
+  overflow:hidden;
+  transition:border-color 0.2s;
+}
+.cl-group:hover { border-color:var(--border2); }
+.cl-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:1.2rem 1.5rem;
+  cursor:pointer;
+  transition:background 0.2s;
+}
+.cl-header:hover { background:var(--glass); }
+.cl-header-left { display:flex; align-items:center; gap:14px; }
+.cl-icon-wrap {
+  width:38px; height:38px;
+  border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0;
+}
+.cl-title { font-size:14.5px; font-weight:700; margin-bottom:2px; }
+.cl-count { font-size:11.5px; color:var(--txt3); }
+.cl-chevron { color:var(--txt3); font-size:11px; transition:transform 0.3s cubic-bezier(0.23,1,0.32,1); }
+.cl-chevron.open { transform:rotate(180deg); }
+.cl-body { display:none; padding:0.5rem 1.5rem 1.2rem; border-top:1px solid var(--border); }
+.cl-body.open { display:block; }
+.cl-item {
+  display:flex; align-items:flex-start; gap:14px;
+  padding:13px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  cursor:pointer;
+  transition:opacity 0.15s;
+}
+.cl-item:last-child { border:none; }
+.cl-item:hover { opacity:0.8; }
+.cl-checkbox {
+  width:20px; height:20px; border-radius:5px; flex-shrink:0;
+  border:1.5px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:800;
+  transition:all 0.25s cubic-bezier(0.23,1,0.32,1);
+  margin-top:1px;
+  background:transparent;
+}
+.cl-item.checked .cl-checkbox { background:var(--gold); border-color:var(--gold); color:#0a0808; transform:scale(1.05); }
+.cl-item.checked .cl-item-title { text-decoration:line-through; color:var(--txt3); }
+.cl-item-title {
+  font-size:13.5px; font-weight:600; line-height:1.4;
+  display:flex; align-items:center; flex-wrap:wrap; gap:6px;
+  margin-bottom:3px;
+}
+.cl-item-desc { font-size:12px; color:var(--txt3); line-height:1.7; }
+.cl-link {
+  display:inline-flex; align-items:center; gap:5px;
+  color:var(--gold2); font-size:11.5px; font-weight:600;
+  text-decoration:none; margin-top:5px;
+  padding:3px 10px;
+  background:rgba(212,168,67,0.08);
+  border:1px solid rgba(212,168,67,0.15);
+  border-radius:6px;
+  transition:all 0.2s;
+}
+.cl-link:hover { background:rgba(212,168,67,0.15); border-color:rgba(212,168,67,0.3); }
+
+.tag {
+  display:inline-flex; align-items:center;
+  padding:2px 8px;
+  border-radius:4px;
+  font-size:10px; font-weight:700;
+  text-transform:uppercase; letter-spacing:0.5px;
+  flex-shrink:0;
+}
+.t-req { background:rgba(255,107,107,0.15); color:#ff6b6b; }
+.t-opt { background:rgba(78,203,148,0.15); color:#4ecb94; }
+.t-cond { background:rgba(255,160,64,0.15); color:#ffa040; }
+.t-phd { background:rgba(107,159,255,0.15); color:#6b9fff; }
+
+/* ── COUNTRY HERO ── */
+.ctry-hero {
+  position:relative; overflow:hidden;
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:2.5rem;
+  margin-bottom:1.5rem;
+  display:flex; align-items:center; gap:2rem;
+}
+.ctry-hero::before {
+  content:''; position:absolute;
+  inset:0; opacity:0.04;
+  background-image:url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Ccircle cx='20' cy='20' r='1' fill='%23ffffff'/%3E%3C/g%3E%3C/svg%3E");
+  background-size:40px;
+}
+.ctry-flag-xl { font-size:64px; line-height:1; position:relative; z-index:1; flex-shrink:0; }
+.ctry-hero-text { position:relative; z-index:1; }
+.ctry-hero-name {
+  font-family:'Fraunces', serif;
+  font-size:2.2rem; font-weight:700;
+  letter-spacing:-1px; margin-bottom:0.3rem;
+}
+.ctry-hero-sub { color:var(--txt2); font-size:0.9rem; line-height:1.7; max-width:520px; }
+.ctry-hero-glow {
+  position:absolute; width:300px; height:300px;
+  border-radius:50%; filter:blur(80px); opacity:0.15;
+  right:-50px; top:-50px;
+}
+
+/* ── TABS ── */
+.tab-bar {
+  display:flex; gap:4px;
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius-s);
+  padding:5px;
+  margin-bottom:1.8rem;
+  flex-wrap:wrap;
+}
+.tab-btn {
+  padding:8px 18px;
+  border-radius:7px;
+  border:none; background:transparent;
+  font-family:'Cabinet Grotesk', sans-serif;
+  font-size:13px; font-weight:600;
+  color:var(--txt3);
+  cursor:pointer; transition:all 0.2s;
+  white-space:nowrap;
+}
+.tab-btn:hover { color:var(--txt2); background:var(--glass); }
+.tab-btn.active {
+  background:var(--bg2);
+  color:var(--txt);
+  box-shadow:0 1px 4px rgba(0,0,0,0.4);
+}
+.tab-panel { display:none; }
+.tab-panel.active { display:block; animation:pageIn 0.3s ease both; }
+
+/* ── SCHOLARSHIP CARD ── */
+.sc-wrap { display:flex; flex-direction:column; gap:1rem; }
+.sc-card {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.8rem;
+  transition:all 0.3s cubic-bezier(0.23,1,0.32,1);
+  position:relative; overflow:hidden;
+}
+.sc-card::before {
+  content:''; position:absolute;
+  top:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,168,67,0.3),transparent);
+  opacity:0; transition:opacity 0.3s;
+}
+.sc-card:hover { border-color:rgba(212,168,67,0.25); transform:translateY(-2px); box-shadow:0 16px 50px rgba(0,0,0,0.4); }
+.sc-card:hover::before { opacity:1; }
+.sc-top { display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; margin-bottom:0.8rem; }
+.sc-name { font-family:'Fraunces', serif; font-size:1.15rem; font-weight:700; letter-spacing:-0.5px; line-height:1.3; }
+.sc-badge {
+  flex-shrink:0; padding:4px 12px;
+  border-radius:100px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+}
+.badge-full { background:rgba(78,203,148,0.15); color:#4ecb94; border:1px solid rgba(78,203,148,0.2); }
+.badge-partial { background:rgba(255,160,64,0.15); color:#ffa040; border:1px solid rgba(255,160,64,0.2); }
+.sc-meta { display:flex; gap:1rem; flex-wrap:wrap; font-size:12px; color:var(--txt3); margin-bottom:1rem; }
+.sc-meta span { display:flex; align-items:center; gap:5px; }
+.sc-covers { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:1rem; }
+.sc-pill { padding:4px 11px; background:var(--bg2); border:1px solid var(--border); border-radius:6px; font-size:12px; color:var(--txt2); font-weight:500; }
+.sc-deadline {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 14px;
+  background:rgba(212,168,67,0.06);
+  border:1px solid rgba(212,168,67,0.15);
+  border-radius:8px;
+  font-size:12.5px; font-weight:600; color:var(--gold2);
+  margin-bottom:1rem;
+}
+.sc-links { display:flex; gap:8px; flex-wrap:wrap; }
+.btn-link {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:8px 16px; border-radius:8px;
+  font-family:'Cabinet Grotesk', sans-serif;
+  font-size:12.5px; font-weight:700;
+  text-decoration:none; cursor:pointer; border:none;
+  transition:all 0.2s;
+}
+.btn-primary { background:var(--gold); color:#0a0808; }
+.btn-primary:hover { background:var(--gold2); }
+.btn-ghost { background:transparent; border:1px solid var(--border); color:var(--txt2); }
+.btn-ghost:hover { border-color:var(--border2); color:var(--txt); }
+
+/* ── EMAIL TEMPLATE ── */
+.email-wrap { position:relative; margin-bottom:1.5rem; }
+.email-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.5px; color:var(--txt3); margin-bottom:0.7rem; display:flex; align-items:center; gap:8px; }
+.email-body {
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius-s);
+  padding:1.5rem;
+  font-size:13px; line-height:1.85;
+  white-space:pre-wrap;
+  color:var(--txt2);
+  position:relative;
+}
+.email-var { color:var(--gold2); font-style:italic; font-weight:600; }
+.email-copy-btn {
+  position:absolute; top:12px; right:12px;
+  padding:6px 14px;
+  background:rgba(212,168,67,0.12);
+  border:1px solid rgba(212,168,67,0.25);
+  border-radius:6px;
+  font-family:'Cabinet Grotesk', sans-serif;
+  font-size:11px; font-weight:700;
+  color:var(--gold2); cursor:pointer;
+  transition:all 0.2s;
+}
+.email-copy-btn:hover { background:rgba(212,168,67,0.2); }
+
+/* ── INFO TABLE ── */
+.i-table { width:100%; border-collapse:collapse; margin-bottom:1.5rem; }
+.i-table th {
+  text-align:left; padding:11px 14px;
+  background:var(--bg2); font-size:11px;
+  text-transform:uppercase; letter-spacing:1px;
+  color:var(--gold2); border-bottom:1px solid var(--border); font-weight:700;
+}
+.i-table td {
+  padding:12px 14px; border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:13px; vertical-align:top; line-height:1.6; color:var(--txt2);
+}
+.i-table tr:last-child td { border:none; }
+.i-table a { color:var(--gold2); text-decoration:none; }
+.i-table a:hover { text-decoration:underline; }
+.i-table td strong { color:var(--txt); }
+
+/* ── STEP TRACKER ── */
+.steps-wrap { display:flex; flex-direction:column; }
+.step-item {
+  display:flex; gap:16px; padding:14px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.step-item:last-child { border:none; }
+.step-left { display:flex; flex-direction:column; align-items:center; gap:0; flex-shrink:0; }
+.step-num {
+  width:34px; height:34px; border-radius:50%;
+  border:2px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Fraunces', serif; font-size:13px; font-weight:700;
+  color:var(--txt3); cursor:pointer;
+  transition:all 0.25s cubic-bezier(0.23,1,0.32,1);
+}
+.step-connector { width:2px; height:100%; min-height:16px; background:var(--border); margin:4px auto; transition:background 0.4s; }
+.step-item.done .step-num { background:var(--gold); border-color:var(--gold); color:#0a0808; transform:scale(1.05); }
+.step-item.done .step-connector { background:var(--gold); }
+.step-item.done .step-title { text-decoration:line-through; color:var(--txt3); }
+.step-title { font-size:13.5px; font-weight:600; cursor:pointer; line-height:1.4; }
+.step-desc { font-size:12px; color:var(--txt3); margin-top:4px; line-height:1.6; }
+
+/* ── TODO ── */
+.todo-section {
+  background:var(--bg1);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.5rem;
+  margin-bottom:1rem;
+}
+.todo-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.todo-header h3 { font-family:'Fraunces', serif; font-size:1.1rem; font-weight:700; }
+.todo-stats { font-size:12px; color:var(--txt3); font-weight:500; }
+.todo-add-row {
+  display:flex; gap:8px; margin-bottom:1rem;
+}
+.todo-input {
+  flex:1; background:var(--bg2); border:1px solid var(--border);
+  border-radius:8px; padding:10px 14px; color:var(--txt);
+  font-family:'Cabinet Grotesk', sans-serif; font-size:13.5px;
+  outline:none; transition:all 0.2s;
+}
+.todo-input:focus { border-color:rgba(212,168,67,0.4); box-shadow:0 0 0 3px rgba(212,168,67,0.06); }
+.todo-input::placeholder { color:var(--txt3); }
+.todo-add-btn {
+  padding:10px 18px; border-radius:8px;
+  background:var(--gold); color:#0a0808;
+  border:none; font-family:'Cabinet Grotesk', sans-serif;
+  font-size:13px; font-weight:800;
+  cursor:pointer; transition:all 0.2s; white-space:nowrap;
+}
+.todo-add-btn:hover { background:var(--gold2); }
+.todo-list { list-style:none; }
+.todo-item {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:13.5px; font-weight:500;
+  transition:opacity 0.2s;
+}
+.todo-item:last-child { border:none; }
+.todo-cb {
+  width:18px; height:18px; border-radius:4px; flex-shrink:0;
+  border:1.5px solid var(--border2);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:800; cursor:pointer;
+  transition:all 0.2s;
+}
+.todo-item.done .todo-cb { background:var(--gold); border-color:var(--gold); color:#000; }
+.todo-item.done > span { text-decoration:line-through; color:var(--txt3); }
+.todo-delete { margin-left:auto; color:var(--txt3); cursor:pointer; font-size:16px; opacity:0; transition:opacity 0.2s; }
+.todo-item:hover .todo-delete { opacity:1; }
+.todo-delete:hover { color:#ff6b6b; }
+
+/* ── TIMELINE ── */
+.timeline { padding-left:24px; position:relative; }
+.timeline::before { content:''; position:absolute; left:7px; top:0; bottom:0; width:2px; background:linear-gradient(var(--border),transparent); }
+.tl-item { position:relative; margin-bottom:2rem; }
+.tl-item::before { content:''; position:absolute; left:-20px; top:5px; width:10px; height:10px; border-radius:50%; background:var(--gold); border:2px solid var(--bg); box-shadow:0 0 0 3px rgba(212,168,67,0.2); }
+.tl-month { font-family:'Fraunces', serif; font-size:1rem; font-weight:700; letter-spacing:-0.5px; color:var(--gold2); margin-bottom:0.7rem; }
+.tl-events { display:flex; flex-direction:column; gap:6px; }
+.tl-ev {
+  display:flex; justify-content:space-between; align-items:center; gap:1rem;
+  padding:11px 16px;
+  background:var(--bg1); border:1px solid var(--border); border-radius:var(--radius-s);
+  font-size:13px; transition:border-color 0.2s;
+}
+.tl-ev:hover { border-color:var(--border2); }
+.tl-tag { padding:3px 9px; border-radius:4px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; flex-shrink:0; }
+.tag-kr { background:rgba(255,107,107,0.15); color:var(--kr); }
+.tag-cn { background:rgba(255,160,64,0.15); color:var(--cn); }
+.tag-it { background:rgba(78,203,148,0.15); color:var(--it); }
+.tag-de { background:rgba(107,159,255,0.15); color:var(--de); }
+.tag-pk { background:rgba(212,168,67,0.15); color:var(--gold2); }
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:2rem; right:2rem;
+  background:var(--it); color:#0a1a0f;
+  padding:12px 20px; border-radius:var(--radius-s);
+  font-size:13px; font-weight:700;
+  z-index:9999; opacity:0; transform:translateY(10px);
+  transition:all 0.3s cubic-bezier(0.23,1,0.32,1);
+  pointer-events:none; display:flex; align-items:center; gap:8px;
+}
+.toast.show { opacity:1; transform:translateY(0); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--bg3); border-radius:3px; }
+
+/* TABS CAT */
+.cat-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:1.5rem; }
+.cat-tab {
+  padding:7px 16px; border-radius:100px;
+  border:1px solid var(--border); background:transparent;
+  font-family:'Cabinet Grotesk', sans-serif;
+  font-size:13px; font-weight:600; color:var(--txt3);
+  cursor:pointer; transition:all 0.2s;
+}
+.cat-tab:hover { border-color:var(--border2); color:var(--txt2); }
+.cat-tab.active { background:rgba(212,168,67,0.08); border-color:rgba(212,168,67,0.25); color:var(--gold2); }
+
+@media(max-width:800px) {
+  .app-body { flex-direction:column; }
+  .sidebar { display:none; }
+  .page-wrap { padding:1.5rem; }
+  .fg-row { grid-template-columns:1fr; }
+  .sc-top { flex-direction:column; }
+  .ctry-hero { flex-direction:column; gap:1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div class="cursor" id="cur"></div>
+<div class="cursor-ring" id="curR"></div>
+<div class="toast" id="toast">✓ Copied to clipboard</div>
+
+<!-- ═══════════════════════ WELCOME ═══════════════════════ -->
+<div id="s-welcome" class="screen active">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="grid-bg"></div>
+  <div class="w-inner">
+    <div class="w-eyebrow">
+      <span class="w-eyebrow-dot"></span>
+      Full-Stack Scholarship Consultant for Pakistani Students
+    </div>
+    <h1 class="w-headline">
+      <span class="w-headline-line1">Your Path to</span>
+      <span class="w-headline-line2">Global Scholarships</span>
+    </h1>
+    <p class="w-sub">The most comprehensive A–Z scholarship resource for Pakistani students — portals, deadlines, professor email templates, visa guides, and interactive progress tracking for South Korea, China, Italy & Germany.</p>
+    <div class="w-countries">
+      <div class="w-ctry"><span class="w-ctry-flag">🇰🇷</span> South Korea</div>
+      <div class="w-ctry"><span class="w-ctry-flag">🇨🇳</span> China</div>
+      <div class="w-ctry"><span class="w-ctry-flag">🇮🇹</span> Italy</div>
+      <div class="w-ctry"><span class="w-ctry-flag">🇩🇪</span> Germany</div>
+    </div>
+    <button class="w-cta" onclick="showReg()">
+      Begin Your Journey
+      <span class="w-cta-arrow">→</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ REGISTER ═══════════════════════ -->
+<div id="s-register" class="screen">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="reg-card">
+    <div class="reg-step-bar">
+      <div class="reg-step active" id="rs1"></div>
+      <div class="reg-step" id="rs2"></div>
+      <div class="reg-step" id="rs3"></div>
+      <div class="reg-step" id="rs4"></div>
+    </div>
+    <div class="ph-eyebrow">Create Your Profile</div>
+    <h2 class="reg-h1">Let's get started</h2>
+    <p class="reg-sub">A few details to personalise your scholarship dashboard with tailored checklists and progress tracking.</p>
+    <div class="fg-row">
+      <div class="fg"><label>First Name</label><input id="rFN" placeholder="Ahmad" /></div>
+      <div class="fg"><label>Last Name</label><input id="rLN" placeholder="Khan" /></div>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Degree Level</label>
+        <select id="rDeg">
+          <option value="">Select…</option>
+          <option>Bachelor's (BS)</option>
+          <option>Master's (MS / MPhil)</option>
+          <option>PhD</option>
+          <option>Postdoc / Research</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Field of Study</label>
+        <select id="rField">
+          <option value="">Select…</option>
+          <option>Computer Science / IT</option>
+          <option>Engineering</option>
+          <option>Business / Management</option>
+          <option>Medicine / Health Sciences</option>
+          <option>Natural Sciences</option>
+          <option>Social Sciences</option>
+          <option>Agriculture / Environment</option>
+          <option>Arts / Design</option>
+          <option>Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="fg-row">
+      <div class="fg">
+        <label>Province</label>
+        <select id="rProv">
+          <option value="">Select…</option>
+          <option>Punjab</option><option>Sindh</option><option>KPK</option>
+          <option>Balochistan</option><option>Gilgit-Baltistan</option>
+          <option>AJK</option><option>Islamabad (ICT)</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>CGPA / Percentage</label>
+        <input id="rGPA" placeholder="e.g. 3.5 / 4.0" />
+      </div>
+    </div>
+    <div class="fg"><label>Target Countries — Select All That Apply</label></div>
+    <div class="ctry-grid">
+      <div class="ctry-card kr-card selected" onclick="togC(this,'kr')">
+        <div class="check-badge">✓</div>
+        <span class="c-flag">🇰🇷</span>
+        <div class="c-name">South Korea</div>
+        <div class="c-sub">GKS · KAIST · SNU</div>
+      </div>
+      <div class="ctry-card cn-card selected" onclick="togC(this,'cn')">
+        <div class="check-badge">✓</div>
+        <span class="c-flag">🇨🇳</span>
+        <div class="c-name">China</div>
+        <div class="c-sub">CSC · HEC-China · ANSO</div>
+      </div>
+      <div class="ctry-card it-card selected" onclick="togC(this,'it')">
+        <div class="check-badge">✓</div>
+        <span class="c-flag">🇮🇹</span>
+        <div class="c-name">Italy</div>
+        <div class="c-sub">MAECI · DSU · PoliMi</div>
+      </div>
+      <div class="ctry-card de-card selected" onclick="togC(this,'de')">
+        <div class="check-badge">✓</div>
+        <span class="c-flag">🇩🇪</span>
+        <div class="c-name">Germany</div>
+        <div class="c-sub">DAAD · APS · uni-assist</div>
+      </div>
+    </div>
+    <button class="btn-submit" onclick="launch()">
+      Launch My Dashboard <span>→</span>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════ APP ═══════════════════════ -->
+<div id="s-app" class="screen">
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="nav-brand">
+      <div class="nav-brand-dot"></div>
+      ScholarPath
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge" id="nav-degree">MS</span>
+      <div class="nav-user">
+        <span class="nav-user-name" id="nav-name"></span>
+        <div class="nav-avatar" id="nav-ava">A</div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sb-section-label">Overview</div>
+      <div class="sb-item active" data-page="overview" onclick="goPage('overview',this)">
+        <span class="sb-icon">⬡</span> Dashboard
+      </div>
+      <div class="sb-item" data-page="docs" onclick="goPage('docs',this)">
+        <span class="sb-icon">📋</span> Documents
+      </div>
+      <div class="sb-item" data-page="todos" onclick="goPage('todos',this)">
+        <span class="sb-icon">✦</span> To-Do Lists
+      </div>
+      <div class="sb-item" data-page="timeline" onclick="goPage('timeline',this)">
+        <span class="sb-icon">◷</span> Timeline
+      </div>
+      <div class="sb-item" data-page="sop" onclick="goPage('sop',this)">
+        <span class="sb-icon">✎</span> SOP Guide
+      </div>
+
+      <div class="sb-divider"></div>
+      <div class="sb-section-label">Countries</div>
+
+      <div class="sb-ctry" onclick="goPage('korea',this)" data-page="korea">
+        <span class="sb-flag">🇰🇷</span>
+        <span style="flex:1;font-size:13px;">South Korea</span>
+        <span class="sb-pct" id="sp-kr" style="color:var(--kr)">—</span>
+      </div>
+      <div class="sb-ctry" onclick="goPage('china',this)" data-page="china">
+        <span class="sb-flag">🇨🇳</span>
+        <span style="flex:1;font-size:13px;">China</span>
+        <span class="sb-pct" id="sp-cn" style="color:var(--cn)">—</span>
+      </div>
+      <div class="sb-ctry" onclick="goPage('italy',this)" data-page="italy">
+        <span class="sb-flag">🇮🇹</span>
+        <span style="flex:1;font-size:13px;">Italy</span>
+        <span class="sb-pct" id="sp-it" style="color:var(--it)">—</span>
+      </div>
+      <div class="sb-ctry" onclick="goPage('germany',this)" data-page="germany">
+        <span class="sb-flag">🇩🇪</span>
+        <span style="flex:1;font-size:13px;">Germany</span>
+        <span class="sb-pct" id="sp-de" style="color:var(--de)">—</span>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="page-wrap">
+
+<!-- ────────────────── OVERVIEW ────────────────── -->
+<div class="page active" id="pg-overview">
+  <div class="ph">
+    <div class="ph-eyebrow">Dashboard</div>
+    <h1 id="dash-title">Good morning, Student</h1>
+    <p>Your personalised scholarship command centre — track every step of the journey.</p>
+  </div>
+
+  <div class="stat-grid" id="stat-grid">
+    <!-- built by JS -->
+  </div>
+
+  <div class="alert alert-warn">
+    <span class="alert-icon">⚡</span>
+    <div><strong>Start document processing immediately.</strong> HEC attestation takes 4–8 weeks, IBCC equivalence 4–6 weeks, APS Germany 6–8 weeks. Begin all three in parallel at least 3 months before any deadline.</div>
+  </div>
+
+  <div class="sec-h"><h2>Your Roadmap</h2><div class="sec-h-line"></div></div>
+  <div class="grid2">
+    <div class="info-card"><h4>Phase 1 — Documents</h4><ul>
+      <li>Renew passport at NADRA if expiring within 2 years</li>
+      <li>Apply for IBCC equivalence immediately (ibcc.edu.pk)</li>
+      <li>Start HEC degree attestation (hec.gov.pk/attestation)</li>
+      <li>Get police character certificate from local station</li>
+      <li>Collect 30+ passport-size photos (white background)</li>
+    </ul></div>
+    <div class="info-card"><h4>Phase 2 — Tests & Language</h4><ul>
+      <li>Book IELTS / TOEFL (British Council or IDP Pakistan)</li>
+      <li>Germany: enroll in German B1/B2 (Goethe Institut Lahore/Karachi)</li>
+      <li>Korea: begin TOPIK prep — topik.go.kr</li>
+      <li>China (Chinese-medium): start HSK prep hsk.neea.edu.cn</li>
+      <li>Take GRE if applying to DAAD or US-style programs</li>
+    </ul></div>
+    <div class="info-card"><h4>Phase 3 — Applications</h4><ul>
+      <li>Write tailored SOP for each country and university</li>
+      <li>Contact 5–10 professors at target universities</li>
+      <li>Request recommendation letters 2 months in advance</li>
+      <li>Register on all scholarship portals (CSC, NIIED, DAAD)</li>
+      <li>Apply to 5–8 scholarships simultaneously — never rely on one</li>
+    </ul></div>
+    <div class="info-card"><h4>Phase 4 — Visa & Travel</h4><ul>
+      <li>Apply for student visa after receiving acceptance letter</li>
+      <li>Get medical fitness certificate from approved hospital</li>
+      <li>Open Sperrkonto blocked account for Germany (Fintiba)</li>
+      <li>Book accommodation before visa appointment</li>
+      <li>Arrange travel insurance before departure</li>
+    </ul></div>
+  </div>
+</div>
+
+<!-- ────────────────── DOCUMENTS ────────────────── -->
+<div class="page" id="pg-docs">
+  <div class="ph">
+    <div class="ph-eyebrow">Documents Checklist</div>
+    <h1>Every document you need</h1>
+    <p>Complete A–Z list from Pakistan — with attestation steps, fees, timelines, and official portals.</p>
+  </div>
+  <div class="alert alert-info">
+    <span class="alert-icon">ℹ</span>
+    <div><strong>Attestation order:</strong> University / Board → HEC → MOFA → Embassy. Keep 15+ photocopies of every document. Never send originals unless explicitly required.</div>
+  </div>
+
+  <!-- Personal -->
+  <div class="cl-group">
+    <div class="cl-header" onclick="togCL(this)">
+      <div class="cl-header-left">
+        <div class="cl-icon-wrap" style="background:rgba(212,168,67,0.1)">🪪</div>
+        <div><div class="cl-title">Personal Identity</div><div class="cl-count" id="cnt-personal">0 / 6 completed</div></div>
+      </div>
+      <span class="cl-chevron open">▾</span>
+    </div>
+    <div class="cl-body open">
+      <div class="cl-item" onclick="ckItem(this,'personal',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Valid Passport <span class="tag t-req">Required</span></div><div class="cl-item-desc">Minimum 2 years validity. Renew at NADRA (PKR 5,500 normal / PKR 13,000 urgent, 4–6 weeks). Name must exactly match CNIC. Bring 5 attested copies to every submission.</div><a class="cl-link" href="https://onlinenps.nadra.gov.pk" target="_blank">↗ nadra.gov.pk</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'personal',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">CNIC / B-Form <span class="tag t-req">Required</span></div><div class="cl-item-desc">National Identity Card (18+) or B-Form (under 18). Get attested by Class-1 Gazetted Officer. Scan front and back. Keep digital copy on Google Drive.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'personal',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Domicile Certificate <span class="tag t-req">Required</span></div><div class="cl-item-desc">From local Deputy Commissioner (DC) office. Specifies your province — critical for provincial quota scholarships. Takes 1–2 weeks. Required for GKS Korea, CSC China, DAAD Germany.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'personal',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">NADRA Birth Certificate <span class="tag t-req">Required</span></div><div class="cl-item-desc">Computerised NADRA birth certificate. Get MOFA attested copy. If old Union Council certificate, verify via NADRA first, then MOFA attest.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'personal',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Passport Photos (30–40) <span class="tag t-req">Required</span></div><div class="cl-item-desc">White background, 35×45mm standard. China requires 33×48mm — confirm with each embassy. No glasses. Natural expression. Get extras — you'll use them across multiple applications.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'personal',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Police Character Certificate <span class="tag t-req">Required</span></div><div class="cl-item-desc">Apply at local police station (CNIC + 2 photos). Takes 1–2 weeks. Valid 6 months — time close to visa submission. Get MOFA attested. Punjab: apply online at punjabpolice.gov.pk for e-PCC.</div><a class="cl-link" href="https://punjabpolice.gov.pk" target="_blank">↗ punjabpolice.gov.pk</a></div></div>
+    </div>
+  </div>
+
+  <!-- Academic -->
+  <div class="cl-group">
+    <div class="cl-header" onclick="togCL(this)">
+      <div class="cl-header-left">
+        <div class="cl-icon-wrap" style="background:rgba(107,159,255,0.1)">🎓</div>
+        <div><div class="cl-title">Academic Documents</div><div class="cl-count" id="cnt-academic">0 / 8 completed</div></div>
+      </div>
+      <span class="cl-chevron open">▾</span>
+    </div>
+    <div class="cl-body open">
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Matric Certificate & DMC <span class="tag t-req">Required</span></div><div class="cl-item-desc">Original + 10 attested copies. Path: Board of Education → IBCC → HEC → MOFA. Each step costs PKR 1,000–3,000. Boards take 2–4 weeks.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Intermediate Certificate & DMC <span class="tag t-req">Required</span></div><div class="cl-item-desc">FSc / FA / ICS / ICom. Board must verify before HEC accepts it. Keep originals safe — only attested copies go to embassies. Required before IBCC equivalence.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">IBCC Equivalence Certificate <span class="tag t-req">Required</span></div><div class="cl-item-desc">Mandatory for ALL overseas applications. Converts Pakistani grades to international equivalence. Apply at ibcc.edu.pk or visit Islamabad/Karachi/Lahore/Peshawar offices. Fee: PKR 3,800. Takes 4–6 weeks.</div><a class="cl-link" href="https://ibcc.edu.pk" target="_blank">↗ ibcc.edu.pk</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Bachelor's Degree + Transcripts <span class="tag t-cond">If applicable</span></div><div class="cl-item-desc">University Registrar → HEC (hec.gov.pk/attestation) → MOFA. Fee PKR 600–1,000/document. Takes 4–8 weeks. Verify your university is on HEC's recognized list first.</div><a class="cl-link" href="https://hec.gov.pk/english/universities/pages/RL/recognizedInstitutes.aspx" target="_blank">↗ HEC Recognized List</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Master's Degree + Transcripts <span class="tag t-cond">If applicable</span></div><div class="cl-item-desc">Same HEC attestation process. PhD applicants need all previous degrees (BS + MS) attested. Some universities require official sealed transcripts — request 5–10 copies from Registrar.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">HEC Degree Attestation <span class="tag t-req">Required</span></div><div class="cl-item-desc">Apply online → pay fee → submit physically at HEC office → collect attested copy. Urgent: ~2 weeks (PKR 2,000). Normal: 4–8 weeks (PKR 600). Track application status online.</div><a class="cl-link" href="https://hec.gov.pk/attestation" target="_blank">↗ hec.gov.pk/attestation</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">MOFA Attestation <span class="tag t-req">Required</span></div><div class="cl-item-desc">Final Pakistani attestation step. Offices in Islamabad (Constitution Ave), Karachi, Lahore, Peshawar. Fee PKR 200–500 per document. 2–3 days walk-in, 1–2 weeks postal. Bring originals + copies + CNIC.</div><a class="cl-link" href="https://mofa.gov.pk" target="_blank">↗ mofa.gov.pk</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'academic',8)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Official Sealed Transcripts <span class="tag t-req">Required</span></div><div class="cl-item-desc">Required by German and Korean universities — in sealed university envelope with Registrar signature and stamp. Request 5–10 copies. Usually free or nominal fee. Do not open envelopes.</div></div></div>
+    </div>
+  </div>
+
+  <!-- Financial -->
+  <div class="cl-group">
+    <div class="cl-header" onclick="togCL(this)">
+      <div class="cl-header-left">
+        <div class="cl-icon-wrap" style="background:rgba(78,203,148,0.1)">💳</div>
+        <div><div class="cl-title">Financial Documents</div><div class="cl-count" id="cnt-financial">0 / 5 completed</div></div>
+      </div>
+      <span class="cl-chevron">▾</span>
+    </div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="ckItem(this,'financial',5)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Bank Statement (6 months) <span class="tag t-req">Required</span></div><div class="cl-item-desc">Bank-stamped and signed by branch manager. Minimum amounts: Italy €6,079/year, Germany Sperrkonto €11,208, Korea $1,500 USD, China varies by province. Must be obtained within 1 month of submission.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'financial',5)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Salary / Income Certificate <span class="tag t-cond">If applicable</span></div><div class="cl-item-desc">From sponsor's employer on official letterhead. Must state monthly and annual salary. Get attested by Class-1 officer. Required if family member is sponsoring your studies.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'financial',5)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Affidavit of Financial Sponsorship <span class="tag t-cond">If applicable</span></div><div class="cl-item-desc">Notarized document if parent/guardian is sponsoring. Draft by lawyer (PKR 500–1,000), notarize at court, then MOFA attest.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'financial',5)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">FBR / NTN Certificate <span class="tag t-opt">Optional</span></div><div class="cl-item-desc">Strengthens financial credibility for visa applications. Register at fbr.gov.pk. Active Taxpayer List (ATL) verification helps especially for Italian and German visas.</div><a class="cl-link" href="https://fbr.gov.pk" target="_blank">↗ fbr.gov.pk</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'financial',5)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Property Documents <span class="tag t-opt">Optional</span></div><div class="cl-item-desc">Proof of property ownership in Pakistan (Fard, registry) demonstrates ties to home country and reduces visa rejection risk — especially useful for Italy and Germany applications.</div></div></div>
+    </div>
+  </div>
+
+  <!-- Application -->
+  <div class="cl-group">
+    <div class="cl-header" onclick="togCL(this)">
+      <div class="cl-header-left">
+        <div class="cl-icon-wrap" style="background:rgba(255,107,107,0.1)">📝</div>
+        <div><div class="cl-title">Application Documents</div><div class="cl-count" id="cnt-application">0 / 6 completed</div></div>
+      </div>
+      <span class="cl-chevron">▾</span>
+    </div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="ckItem(this,'application',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Statement of Purpose (SOP) <span class="tag t-req">Required</span></div><div class="cl-item-desc">500–1,200 words. Tailor each one — never submit identical SOPs. Structure: Specific hook → Academic background → Research/work experience → Why this country and program → Career impact. See SOP Guide for full template.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'application',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Academic CV / Resume <span class="tag t-req">Required</span></div><div class="cl-item-desc">Academic format — not a job resume. Include: Education, Thesis/Research, Publications, Awards, Technical Skills, Languages, References. 2 pages for MS, up to 4 for PhD. Use clean LaTeX or Word template.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'application',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">3 Recommendation Letters <span class="tag t-req">Required</span></div><div class="cl-item-desc">From professors or supervisors — NOT family friends. On official university letterhead with stamp, signature, date, and referee's contact information. Request 2 months in advance. Give referees your CV and SOP draft.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'application',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Research Proposal <span class="tag t-phd">PhD only</span></div><div class="cl-item-desc">2,000–5,000 words. Title → Abstract → Background → Research Gap → Objectives → Methodology → Expected Outcomes → Timeline → References. Must align with your target professor's current research — read their last 3 papers before writing.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'application',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Language Proficiency Certificate <span class="tag t-req">Required</span></div><div class="cl-item-desc">IELTS 6.0–7.0+ for most programs. Book at British Council Pakistan or IDP. TOEFL iBT 80+ also accepted. Some universities issue English-medium waivers — check policy. Test valid 2 years.</div><a class="cl-link" href="https://www.britishcouncil.org.pk/exam/ielts" target="_blank">↗ Book IELTS Pakistan</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'application',6)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Study Plan / Motivation Letter <span class="tag t-req">Required</span></div><div class="cl-item-desc">1–2 pages. Focus on: Why this specific country, what you plan to study, how you'll contribute to Pakistan after returning. GKS Study Plan must specifically mention Korea–Pakistan relations contribution.</div></div></div>
+    </div>
+  </div>
+
+  <!-- Medical -->
+  <div class="cl-group">
+    <div class="cl-header" onclick="togCL(this)">
+      <div class="cl-header-left">
+        <div class="cl-icon-wrap" style="background:rgba(255,160,64,0.1)">🏥</div>
+        <div><div class="cl-title">Medical Documents</div><div class="cl-count" id="cnt-medical">0 / 4 completed</div></div>
+      </div>
+      <span class="cl-chevron">▾</span>
+    </div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="ckItem(this,'medical',4)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Medical Fitness Certificate <span class="tag t-req">Required</span></div><div class="cl-item-desc">From government hospital or embassy-approved clinic. Includes: chest X-ray, blood type, HIV/AIDS, Hepatitis B&C, malaria, drug screening. China requires their specific Foreigner Physical Examination Form — download from Chinese Embassy website. Valid 6 months.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'medical',4)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">COVID-19 Vaccination Certificate <span class="tag t-req">Required</span></div><div class="cl-item-desc">Full course + boosters. Verify via NADRA health portal. China specifically requires this for visa. Keep both digital and physical copies.</div><a class="cl-link" href="https://nims.nadra.gov.pk" target="_blank">↗ NADRA Health Portal</a></div></div>
+      <div class="cl-item" onclick="ckItem(this,'medical',4)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Hepatitis B Vaccination <span class="tag t-cond">Recommended</span></div><div class="cl-item-desc">Mandatory for China. Recommended for Korea and Germany. 3-shot series over 6 months — plan ahead. Available at government hospitals free or private clinics PKR 1,500–2,500 per dose.</div></div></div>
+      <div class="cl-item" onclick="ckItem(this,'medical',4)"><div class="cl-checkbox">✓</div><div><div class="cl-item-title">Health Insurance <span class="tag t-cond">Visa stage</span></div><div class="cl-item-desc">Most scholarships include it. If self-funded: Germany requires statutory insurance (TK, AOK ~€110/month). Italy: private insurance min €30,000 coverage for visa. Korea and China: public enrollment after arrival.</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────── TO-DO ────────────────── -->
+<div class="page" id="pg-todos">
+  <div class="ph">
+    <div class="ph-eyebrow">My To-Do Lists</div>
+    <h1>Track every task</h1>
+    <p>Add, complete, and manage your personal action items. Pre-loaded with curated tasks for each country.</p>
+  </div>
+  <div class="cat-tabs">
+    <button class="cat-tab active" onclick="switchTodo('all',this)">All</button>
+    <button class="cat-tab" onclick="switchTodo('kr',this)">🇰🇷 Korea</button>
+    <button class="cat-tab" onclick="switchTodo('cn',this)">🇨🇳 China</button>
+    <button class="cat-tab" onclick="switchTodo('it',this)">🇮🇹 Italy</button>
+    <button class="cat-tab" onclick="switchTodo('de',this)">🇩🇪 Germany</button>
+    <button class="cat-tab" onclick="switchTodo('docs',this)">📋 Documents</button>
+    <button class="cat-tab" onclick="switchTodo('personal',this)">✦ Personal</button>
+  </div>
+  <div id="todo-boards"></div>
+</div>
+
+<!-- ────────────────── KOREA ────────────────── -->
+<div class="page" id="pg-korea">
+  <div class="ctry-hero">
+    <div class="ctry-hero-glow" style="background:var(--kr)"></div>
+    <div class="ctry-flag-xl">🇰🇷</div>
+    <div class="ctry-hero-text">
+      <div class="ctry-hero-name">South Korea</div>
+      <div class="ctry-hero-sub">World-class universities, strong STEM programs, and the prestigious GKS scholarship with 5–7 Embassy Track seats per year for Pakistan.</div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('kr','scholarships',this)">Scholarships</button>
+    <button class="tab-btn" onclick="switchTab('kr','howto',this)">How to Apply</button>
+    <button class="tab-btn" onclick="switchTab('kr','professor',this)">Contact Professors</button>
+    <button class="tab-btn" onclick="switchTab('kr','docs',this)">Extra Documents</button>
+    <button class="tab-btn" onclick="switchTab('kr','visa',this)">Visa Guide</button>
+    <button class="tab-btn" onclick="switchTab('kr','steps',this)">Step Tracker</button>
+  </div>
+  <div id="kr-panels">
+    <div class="tab-panel active" id="kr-scholarships">
+      <div class="sc-wrap">
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">GKS — Global Korea Scholarship (Government)</div><div class="sc-badge badge-full">Fully Funded</div></div>
+          <div class="sc-meta"><span>🏛 NIIED / Korean Government</span><span>🎓 BS, MS, PhD</span><span>🌐 Embassy + University Tracks</span></div>
+          <div class="sc-covers"><div class="sc-pill">Full Tuition</div><div class="sc-pill">₩900K–1M / month stipend</div><div class="sc-pill">Round-trip airfare</div><div class="sc-pill">₩200K settling allowance</div><div class="sc-pill">Medical insurance</div><div class="sc-pill">1-year Korean language training</div></div>
+          <div class="sc-deadline">📅 Embassy Track: Sept–Nov | University Track: Feb–March</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://www.studyinkorea.go.kr" target="_blank">↗ studyinkorea.go.kr</a><a class="btn-link btn-ghost" href="https://www.niied.go.kr" target="_blank">NIIED Portal</a><a class="btn-link btn-ghost" href="https://www.mofa.go.kr/eng" target="_blank">Korean Embassy</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">KAIST International Student Scholarship</div><div class="sc-badge badge-full">Fully Funded</div></div>
+          <div class="sc-meta"><span>🏛 KAIST — Korea Advanced Institute of Science</span><span>🎓 MS, PhD</span><span>💡 STEM Focus</span></div>
+          <div class="sc-covers"><div class="sc-pill">Full Tuition</div><div class="sc-pill">₩350K–500K/month</div><div class="sc-pill">Research funding</div></div>
+          <div class="sc-deadline">📅 Fall: ~March | Spring: ~September</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://admission.kaist.ac.kr" target="_blank">↗ admission.kaist.ac.kr</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">POSTECH International Scholarship</div><div class="sc-badge badge-full">Fully Funded</div></div>
+          <div class="sc-meta"><span>🏛 POSTECH</span><span>🎓 MS, PhD</span></div>
+          <div class="sc-covers"><div class="sc-pill">Full Tuition</div><div class="sc-pill">Monthly stipend</div><div class="sc-pill">Dormitory</div><div class="sc-pill">Research allowance</div></div>
+          <div class="sc-deadline">📅 Spring: Sept–Nov | Fall: March–May</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://admission.postech.ac.kr" target="_blank">↗ admission.postech.ac.kr</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">SNU — Seoul National University Scholarship</div><div class="sc-badge badge-partial">Partial–Full</div></div>
+          <div class="sc-meta"><span>🏛 Seoul National University</span><span>🎓 All levels</span></div>
+          <div class="sc-covers"><div class="sc-pill">Tuition waiver up to 100%</div><div class="sc-pill">Stipend varies by department</div></div>
+          <div class="sc-deadline">📅 Oct–Nov window — check SNU admissions portal</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://en.snu.ac.kr" target="_blank">↗ en.snu.ac.kr</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="kr-howto">
+      <div class="grid2">
+        <div class="info-card"><h4>Embassy Track (Recommended)</h4><ul>
+          <li>Download GKS form from studyinkorea.go.kr</li>
+          <li>Prepare all documents (see Extra Documents tab)</li>
+          <li>Submit to Korean Embassy Islamabad: 10 Diplomatic Enclave, +92-51-2279380</li>
+          <li>Appear for interview if shortlisted at Embassy</li>
+          <li>Embassy nominates shortlisted candidates to NIIED</li>
+          <li>NIIED matches you with a Korean university</li>
+          <li>Receive acceptance letter → apply for D-2 visa</li>
+        </ul></div>
+        <div class="info-card"><h4>University Track (More Flexibility)</h4><ul>
+          <li>Visit studyinkorea.go.kr → select GKS University Track</li>
+          <li>Choose up to 3 Korean universities from eligible list</li>
+          <li>Submit GKS application directly to each university</li>
+          <li>Each university conducts its own selection process</li>
+          <li>Accepted students go through NIIED for scholarship award</li>
+          <li>More seats and less competition than Embassy Track</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="kr-professor">
+      <div class="alert alert-info"><span class="alert-icon">💡</span><div>Emailing professors before applying <strong>dramatically increases your chances</strong> — especially for PhD and research-based MS. A professor's recommendation is decisive in GKS University Track.</div></div>
+      <div class="grid2" style="margin-bottom:1.5rem;">
+        <div class="info-card"><h4>Where to Find Korean Professors</h4><ul>
+          <li>RISS — Korea's academic database: riss.kr</li>
+          <li>Korea Science portal: koreascience.kr</li>
+          <li>Google Scholar: search "[topic] site:ac.kr"</li>
+          <li>University faculty pages: KAIST, SNU, POSTECH, Yonsei</li>
+          <li>ResearchGate and Academia.edu profiles</li>
+        </ul></div>
+        <div class="info-card"><h4>Key Tips</h4><ul>
+          <li>Read the professor's 2–3 latest papers before writing</li>
+          <li>Mention a specific aspect of their research</li>
+          <li>Email format: firstname@[university].ac.kr</li>
+          <li>Follow up once after 2 weeks if no reply</li>
+          <li>TOPIK Level 2+ gives huge advantage for GKS</li>
+        </ul></div>
+      </div>
+      <div class="sec-h"><h2>Professor Email Template</h2><div class="sec-h-line"></div></div>
+      <div class="email-wrap">
+        <div class="email-body" id="tpl-kr">Subject: Inquiry Regarding MS/PhD Supervision — [Research Area] — Fall 2025
+
+Dear Professor <span class="email-var">[Last Name]</span>,
+
+My name is <span class="email-var">[Your Full Name]</span>, a <span class="email-var">[BS/MS]</span> graduate in <span class="email-var">[Field]</span> from <span class="email-var">[University Name]</span>, Pakistan (CGPA: <span class="email-var">[X.X/4.0]</span>).
+
+I am writing to express my strong interest in pursuing a <span class="email-var">[MS/PhD]</span> under your supervision at <span class="email-var">[University Name]</span>. I recently read your paper "<span class="email-var">[Exact Paper Title]</span>" and found the section on <span class="email-var">[specific aspect]</span> particularly insightful as it aligns closely with my research interest in <span class="email-var">[specific topic]</span>.
+
+During my thesis, I worked on <span class="email-var">[brief description]</span>, which introduced me to <span class="email-var">[methodology/technique]</span>. I believe this background would allow me to contribute meaningfully to your lab's work.
+
+I am applying for the GKS (Global Korea Scholarship) — University Track for Fall <span class="email-var">[Year]</span>. I have attached my CV and research proposal.
+
+Thank you for your time.
+
+Warm regards,
+<span class="email-var">[Your Full Name]</span> | <span class="email-var">[Email]</span> | <span class="email-var">[LinkedIn/ResearchGate]</span>
+        <button class="email-copy-btn" onclick="copyTpl('tpl-kr')">Copy</button></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="kr-docs">
+      <table class="i-table">
+        <tr><th>Document</th><th>Details</th><th>Source</th></tr>
+        <tr><td><strong>GKS Application Form</strong></td><td>Download from NIIED. Print and sign — digital signature not accepted.</td><td><a href="https://www.studyinkorea.go.kr" target="_blank">studyinkorea.go.kr</a></td></tr>
+        <tr><td><strong>GKS Personal Statement</strong></td><td>Specific GKS format. Family background, why Korea, self-introduction, study plan (1,000 words each).</td><td>Download from GKS portal</td></tr>
+        <tr><td><strong>GKS Study Plan</strong></td><td>1–2 pages. Must mention Korea–Pakistan relationship contribution. Very important for Embassy Track.</td><td>GKS template</td></tr>
+        <tr><td><strong>TOPIK Score</strong></td><td>Not mandatory but Level 2+ is a major advantage. Register at topik.go.kr. Exams held in Islamabad, Lahore, Karachi.</td><td><a href="https://www.topik.go.kr" target="_blank">topik.go.kr</a></td></tr>
+        <tr><td><strong>HEC + MOFA Attested Documents</strong></td><td>All academic documents must be HEC then MOFA attested. Korean Embassy may require additional Embassy legalization.</td><td>See Documents page</td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="kr-visa">
+      <div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Korean Embassy Islamabad:</strong> 10 Diplomatic Enclave, Islamabad. Ph: +92-51-2279380. Apply for visa ONLY after receiving university acceptance letter.</div></div>
+      <div class="info-card" style="max-width:600px;"><h4>D-2 Student Visa Documents</h4><ul>
+        <li>Visa application form (from Korean Embassy website)</li>
+        <li>Valid passport (6+ months validity)</li>
+        <li>Acceptance / enrollment letter from Korean university</li>
+        <li>GKS scholarship award letter (if applicable)</li>
+        <li>Bank statement showing min. $1,500 USD or scholarship proof</li>
+        <li>2 passport photos (35×45mm, white background)</li>
+        <li>Medical certificate from approved clinic</li>
+        <li>Hepatitis B vaccination record</li>
+        <li>CNIC attested copy</li>
+      </ul></div>
+    </div>
+    <div class="tab-panel" id="kr-steps">
+      <div class="steps-wrap" id="kr-steps-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────── CHINA ────────────────── -->
+<div class="page" id="pg-china">
+  <div class="ctry-hero">
+    <div class="ctry-hero-glow" style="background:var(--cn)"></div>
+    <div class="ctry-flag-xl">🇨🇳</div>
+    <div class="ctry-hero-text">
+      <div class="ctry-hero-name">China</div>
+      <div class="ctry-hero-sub">Largest scholarship provider for Pakistani students — 2,000+ seats per year. CSC, HEC-China, ANSO, provincial scholarships, and university-specific CPEC programs.</div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('cn','scholarships',this)">Scholarships</button>
+    <button class="tab-btn" onclick="switchTab('cn','portals',this)">Portals</button>
+    <button class="tab-btn" onclick="switchTab('cn','howto',this)">How to Apply</button>
+    <button class="tab-btn" onclick="switchTab('cn','professor',this)">Contact Professors</button>
+    <button class="tab-btn" onclick="switchTab('cn','docs',this)">Extra Documents</button>
+    <button class="tab-btn" onclick="switchTab('cn','visa',this)">Visa Guide</button>
+    <button class="tab-btn" onclick="switchTab('cn','steps',this)">Step Tracker</button>
+  </div>
+  <div id="cn-panels">
+    <div class="tab-panel active" id="cn-scholarships">
+      <div class="sc-wrap">
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">CSC — Chinese Government Scholarship (全额奖学金)</div><div class="sc-badge badge-full">Fully Funded</div></div>
+          <div class="sc-meta"><span>🏛 China Scholarship Council</span><span>🎓 BS, MS, PhD, Language</span><span>📅 January–March annually</span></div>
+          <div class="sc-covers"><div class="sc-pill">Full Tuition</div><div class="sc-pill">Free accommodation</div><div class="sc-pill">¥1,400–3,500/month</div><div class="sc-pill">Medical insurance ¥800/year</div><div class="sc-pill">Settling allowance</div></div>
+          <div class="sc-deadline">📅 Apply Jan–April via Embassy (Agency: CN92004) OR University Track</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://apply.csc.edu.cn" target="_blank">↗ apply.csc.edu.cn</a><a class="btn-link btn-ghost" href="https://www.campuschina.org" target="_blank">campuschina.org</a><a class="btn-link btn-ghost" href="https://www.chinese-embassy.org.pk" target="_blank">Chinese Embassy PK</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">HEC–ANSO Scholarship (Pakistan–China Joint)</div><div class="sc-badge badge-full">Fully Funded</div></div>
+          <div class="sc-meta"><span>🏛 HEC + Chinese Academy of Sciences</span><span>🎓 PhD priority, MS</span><span>🔬 STEM Only</span></div>
+          <div class="sc-covers"><div class="sc-pill">Full Tuition</div><div class="sc-pill">Monthly stipend</div><div class="sc-pill">Accommodation</div><div class="sc-pill">Medical coverage</div></div>
+          <div class="sc-deadline">📅 Apply at hec.gov.pk — January–February window</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://hec.gov.pk/english/scholarshipsgrants/Pages/Scholarships.aspx" target="_blank">↗ HEC Scholarships</a><a class="btn-link btn-ghost" href="https://www.anso.org.cn" target="_blank">ANSO Portal</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">Confucius Institute Scholarship</div><div class="sc-badge badge-partial">Partially Funded</div></div>
+          <div class="sc-meta"><span>🏛 Hanban / CIEF</span><span>🎓 Chinese Language Programs</span></div>
+          <div class="sc-covers"><div class="sc-pill">Tuition waiver</div><div class="sc-pill">¥1,400/month</div><div class="sc-pill">Accommodation allowance</div></div>
+          <div class="sc-deadline">📅 Through local Confucius Institute — March–May window</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://www.campuschina.org" target="_blank">↗ campuschina.org</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="cn-portals">
+      <table class="i-table">
+        <tr><th>Portal</th><th>Purpose</th><th>URL</th></tr>
+        <tr><td><strong>CSC Application System</strong></td><td>Main portal for all CSC scholarship applications — both Embassy and University track</td><td><a href="https://apply.csc.edu.cn" target="_blank">apply.csc.edu.cn</a></td></tr>
+        <tr><td><strong>Campus China (English)</strong></td><td>English interface — browse universities, programs, and scholarship details</td><td><a href="https://www.campuschina.org" target="_blank">campuschina.org</a></td></tr>
+        <tr><td><strong>Chinese Embassy Pakistan</strong></td><td>Embassy Track applications, visa info, announcements. Agency code: CN92004</td><td><a href="https://www.chinese-embassy.org.pk" target="_blank">chinese-embassy.org.pk</a></td></tr>
+        <tr><td><strong>HEC Pakistan Scholarships</strong></td><td>HEC–China joint scholarships, ANSO, and bilateral programs for Pakistanis</td><td><a href="https://hec.gov.pk/english/scholarshipsgrants" target="_blank">hec.gov.pk/scholarships</a></td></tr>
+        <tr><td><strong>CUCAS</strong></td><td>China University & College Admission System — apply to multiple Chinese universities</td><td><a href="https://www.cucas.edu.cn" target="_blank">cucas.edu.cn</a></td></tr>
+        <tr><td><strong>CNKI</strong></td><td>China's academic database — find professors and papers by research area</td><td><a href="https://www.cnki.net" target="_blank">cnki.net</a></td></tr>
+        <tr><td><strong>ANSO Scholarship</strong></td><td>Alliance of International Science Organizations — for STEM PhD applicants</td><td><a href="https://www.anso.org.cn" target="_blank">anso.org.cn</a></td></tr>
+        <tr><td><strong>HSK Registration</strong></td><td>Chinese language proficiency exam for Chinese-medium programs</td><td><a href="https://www.hsk.neea.edu.cn" target="_blank">hsk.neea.edu.cn</a></td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="cn-howto">
+      <div class="grid2">
+        <div class="info-card"><h4>Track A: Embassy Track (Type A)</h4><ul>
+          <li>Register at apply.csc.edu.cn with Agency Code CN92004</li>
+          <li>Fill application form — choose up to 3 universities</li>
+          <li>Print completed form, attach all documents</li>
+          <li>Submit to Chinese Embassy Islamabad: Diplomatic Enclave, St. 5</li>
+          <li>Embassy reviews and forwards to CSC Beijing</li>
+          <li>Results announced May–June. JW202 form issued on acceptance</li>
+        </ul></div>
+        <div class="info-card"><h4>Track B: University Track (Recommended)</h4><ul>
+          <li>Register at apply.csc.edu.cn → select University Track</li>
+          <li>Apply directly through university's international portal (CUCAS or own)</li>
+          <li>Get supervisor's acceptance letter for PhD applications</li>
+          <li>If accepted, university nominates you for CSC scholarship</li>
+          <li>More flexible — no Embassy involvement, year-round intake</li>
+          <li>Having a professor contact dramatically increases success rate</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="cn-professor">
+      <div class="alert alert-info"><span class="alert-icon">💡</span><div>For CSC University Track, a <strong>supervisor acceptance letter</strong> is often decisive. Many Chinese universities require it before accepting your scholarship nomination.</div></div>
+      <div class="sec-h"><h2>Professor Email Template — China</h2><div class="sec-h-line"></div></div>
+      <div class="email-wrap">
+        <div class="email-body" id="tpl-cn">Subject: Prospective CSC PhD Student — [Research Area] — [University Name]
+
+Dear Professor <span class="email-var">[Last Name]</span>,
+
+I am <span class="email-var">[Your Full Name]</span>, a <span class="email-var">[MS/BS]</span> graduate in <span class="email-var">[Field]</span> from <span class="email-var">[University]</span>, Pakistan (CGPA: <span class="email-var">[X.X]</span>). I am writing to respectfully inquire about joining your research group as a <span class="email-var">[MS/PhD]</span> student under the Chinese Government Scholarship (CSC) for <span class="email-var">[Year]</span>.
+
+I have carefully read your publication "<span class="email-var">[Paper Title]</span>" in <span class="email-var">[Journal]</span>, and I am particularly interested in <span class="email-var">[specific aspect]</span>. This aligns with my thesis work on <span class="email-var">[your thesis topic]</span>, where I <span class="email-var">[brief result/method]</span>.
+
+Your recommendation and acceptance letter would be required as part of the CSC university-track application. I have attached my CV and a brief research proposal. I would be honoured to discuss potential research directions at your convenience.
+
+Sincerely,
+<span class="email-var">[Your Full Name]</span> | <span class="email-var">[Email]</span> | <span class="email-var">[WeChat/ResearchGate]</span>
+        <button class="email-copy-btn" onclick="copyTpl('tpl-cn')">Copy</button></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="cn-docs">
+      <table class="i-table">
+        <tr><th>Document</th><th>Details</th></tr>
+        <tr><td><strong>CSC Application Form</strong></td><td>Generated from apply.csc.edu.cn after completing online form. Print and sign. Do not modify printed form.</td></tr>
+        <tr><td><strong>Foreigner Physical Exam Form</strong></td><td>China-specific medical form — download from Chinese Embassy or csc.edu.cn. Tests: blood type, HIV, Hepatitis B&C, chest X-ray, ECG. Government hospital only. Valid 6 months.</td></tr>
+        <tr><td><strong>No-Criminal-Record Certificate</strong></td><td>Police character certificate from Pakistan — MOFA attested. Some universities also require notarization.</td></tr>
+        <tr><td><strong>Study Plan (学习计划)</strong></td><td>500–800 words in English. Explain study/research plan, why China, why this university, career goals after returning to Pakistan.</td></tr>
+        <tr><td><strong>Supervisor Acceptance Letter</strong></td><td>For University Track — professor's signed letter on university letterhead confirming willingness to supervise. Often decisive for PhD applications.</td></tr>
+        <tr><td><strong>HSK Certificate</strong></td><td>Only for Chinese-medium programs. Level 4+ for undergrad, Level 5+ for grad. Register at hsk.neea.edu.cn. Most English-medium programs do not require HSK.</td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="cn-visa">
+      <div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Chinese Embassy Islamabad:</strong> Diplomatic Enclave, Street 4. Visa hours: 9:00 AM–12:00 PM Mon–Fri. Arrive early — very busy. Apply only after receiving JW202 form.</div></div>
+      <div class="info-card" style="max-width:600px;"><h4>X1 Student Visa Requirements</h4><ul>
+        <li>JW201 (university scholarship) or JW202 (government scholarship) admission notice</li>
+        <li>Original admission letter from Chinese university</li>
+        <li>Completed Foreigner Physical Examination Form (by doctor)</li>
+        <li>Valid passport (6+ months validity)</li>
+        <li>2 passport photos (33×48mm, white background)</li>
+        <li>Visa application form (from Embassy website)</li>
+        <li>COVID-19 vaccination certificate</li>
+        <li>Bank statement showing sufficient funds</li>
+        <li>Accommodation proof in China</li>
+        <li>CNIC attested copy</li>
+      </ul></div>
+    </div>
+    <div class="tab-panel" id="cn-steps">
+      <div class="steps-wrap" id="cn-steps-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────── ITALY ────────────────── -->
+<div class="page" id="pg-italy">
+  <div class="ctry-hero">
+    <div class="ctry-hero-glow" style="background:var(--it)"></div>
+    <div class="ctry-flag-xl">🇮🇹</div>
+    <div class="ctry-hero-text">
+      <div class="ctry-hero-name">Italy</div>
+      <div class="ctry-hero-sub">Low-cost tuition at public universities, MAECI government grants, DSU regional support up to €6,000/year, and world-renowned engineering schools like PoliMi and PoliTo.</div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('it','scholarships',this)">Scholarships</button>
+    <button class="tab-btn" onclick="switchTab('it','portals',this)">Portals</button>
+    <button class="tab-btn" onclick="switchTab('it','howto',this)">How to Apply</button>
+    <button class="tab-btn" onclick="switchTab('it','professor',this)">Contact Professors</button>
+    <button class="tab-btn" onclick="switchTab('it','docs',this)">Extra Documents</button>
+    <button class="tab-btn" onclick="switchTab('it','visa',this)">Visa Guide</button>
+    <button class="tab-btn" onclick="switchTab('it','steps',this)">Step Tracker</button>
+  </div>
+  <div id="it-panels">
+    <div class="tab-panel active" id="it-scholarships">
+      <div class="sc-wrap">
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">MAECI Italian Government Scholarship (Borse di Studio)</div><div class="sc-badge badge-partial">€900 / month</div></div>
+          <div class="sc-meta"><span>🏛 Ministry of Foreign Affairs Italy</span><span>🎓 MS, PhD, Research</span><span>📅 February–March annually</span></div>
+          <div class="sc-covers"><div class="sc-pill">€900/month stipend</div><div class="sc-pill">Does not cover tuition (pair with DSU)</div><div class="sc-pill">Duration: 6–12 months</div></div>
+          <div class="sc-deadline">📅 Apply through Italian Embassy Islamabad: Ramna 6. Feb–March window.</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://www.esteri.it/en/opportunita/borse-di-studio" target="_blank">↗ MAECI Scholarships</a><a class="btn-link btn-ghost" href="https://italembislamabad.esteri.it" target="_blank">Italian Embassy PK</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">DSU — Diritto allo Studio Universitario (Regional)</div><div class="sc-badge badge-full">€2,000–6,000/year</div></div>
+          <div class="sc-meta"><span>🏛 Italian Regional Governments</span><span>🎓 All enrolled students</span><span>📅 After enrollment: July–November</span></div>
+          <div class="sc-covers"><div class="sc-pill">Tuition exemption</div><div class="sc-pill">€2,000–6,000 annual grant</div><div class="sc-pill">University accommodation</div><div class="sc-pill">Discounted meals</div></div>
+          <div class="sc-deadline">📅 Apply AFTER enrolling in Italian university. Based on ISEE income. Limit ~€26,000 equivalent.</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://www.edisu.piemonte.it" target="_blank">↗ EDISU Turin</a><a class="btn-link btn-ghost" href="https://www.dsu.unifi.it" target="_blank">DSU Florence</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">Politecnico di Milano International Excellence Award</div><div class="sc-badge badge-partial">€4,000 + tuition waiver</div></div>
+          <div class="sc-meta"><span>🏛 PoliMi — Top engineering school</span><span>🎓 MS</span></div>
+          <div class="sc-covers"><div class="sc-pill">€4,000 grant</div><div class="sc-pill">Partial/full tuition waiver</div></div>
+          <div class="sc-deadline">📅 Deadlines Dec–April depending on program</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://www.polimi.it/en/international-prospective-students/financial-support" target="_blank">↗ PoliMi Financial Support</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="it-portals">
+      <table class="i-table">
+        <tr><th>Portal</th><th>Purpose</th><th>URL</th></tr>
+        <tr><td><strong>Universitaly</strong></td><td>Official Italian gov portal — pre-enrollment, programs, visa support. MANDATORY for student visa.</td><td><a href="https://www.universitaly.it" target="_blank">universitaly.it</a></td></tr>
+        <tr><td><strong>MAECI Scholarships</strong></td><td>Italian Government scholarships via Ministry of Foreign Affairs</td><td><a href="https://www.esteri.it/en/opportunita/borse-di-studio" target="_blank">esteri.it</a></td></tr>
+        <tr><td><strong>Italian Embassy Islamabad</strong></td><td>Visa applications, MAECI scholarships, Declaration of Value (DoV)</td><td><a href="https://italembislamabad.esteri.it" target="_blank">italembislamabad.esteri.it</a></td></tr>
+        <tr><td><strong>Study in Italy (Official)</strong></td><td>Programs, scholarships, university listings — official government portal</td><td><a href="https://studyinitaly.esteri.it" target="_blank">studyinitaly.esteri.it</a></td></tr>
+        <tr><td><strong>EDISU Piemonte</strong></td><td>DSU regional scholarship for Turin universities (PoliTo, UniTo)</td><td><a href="https://www.edisu.piemonte.it" target="_blank">edisu.piemonte.it</a></td></tr>
+        <tr><td><strong>PoliMi Scholarships</strong></td><td>Politecnico di Milano financial support and merit awards</td><td><a href="https://www.polimi.it/en/international-prospective-students/financial-support" target="_blank">polimi.it</a></td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="it-howto">
+      <div class="grid2">
+        <div class="info-card"><h4>Pre-Enrollment via Universitaly (Mandatory)</h4><ul>
+          <li>Register at universitaly.it — create account</li>
+          <li>Upload qualifications for pre-enrollment (Oct–Dec for next year)</li>
+          <li>University reviews and sends confirmation</li>
+          <li>Use pre-enrollment confirmation for student visa</li>
+          <li>After arriving: formally enroll at university (iscrizione)</li>
+        </ul></div>
+        <div class="info-card"><h4>Declaration of Value (DoV) — Critical</h4><ul>
+          <li>Apply at Italian Embassy Islamabad with all attested academic docs</li>
+          <li>Embassy assesses qualifications and issues DoV</li>
+          <li>Fee: ~€50–100. Takes 2–6 weeks</li>
+          <li>Without DoV, Italian university cannot recognise your degree</li>
+          <li>This step is unique to Italy — most other countries don't require it</li>
+        </ul></div>
+        <div class="info-card"><h4>DSU Application (After Enrollment)</h4><ul>
+          <li>Register with regional DSU office (EDISU, ERSU, DiSCo)</li>
+          <li>Submit ISEE/ISEEU income declaration (family income in EUR)</li>
+          <li>Income below ~€26,000: eligible for grant + accommodation</li>
+          <li>Results announced Oct–Nov. Paid December and April</li>
+          <li>This covers most Pakistani student families if documented correctly</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="it-professor">
+      <div class="grid2" style="margin-bottom:1.5rem;">
+        <div class="info-card"><h4>Finding Italian Professors</h4><ul>
+          <li>IRIS Research Portal: iris.polimi.it, iris.unipd.it</li>
+          <li>Google Scholar: search "[topic] site:.it"</li>
+          <li>ResearchGate — Italian professors very active here</li>
+          <li>University department pages — each professor has own profile</li>
+          <li>Email: firstname.lastname@[university].it</li>
+        </ul></div>
+      </div>
+      <div class="sec-h"><h2>Professor Email Template — Italy</h2><div class="sec-h-line"></div></div>
+      <div class="email-wrap">
+        <div class="email-body" id="tpl-it">Subject: PhD/Research Collaboration Inquiry — [Research Area]
+
+Dear Professor <span class="email-var">[Last Name]</span>,
+
+My name is <span class="email-var">[Your Full Name]</span>, a <span class="email-var">[MS/BS]</span> graduate in <span class="email-var">[Field]</span> from <span class="email-var">[University]</span>, Pakistan (GPA: <span class="email-var">[X.X/4.0]</span>).
+
+I have been following your work, particularly "<span class="email-var">[Paper Title]</span>", which I found compelling in its approach to <span class="email-var">[specific method/finding]</span>.
+
+My research background is in <span class="email-var">[area]</span>. During my thesis I investigated <span class="email-var">[topic]</span> using <span class="email-var">[methods]</span>, yielding <span class="email-var">[key result]</span>. I believe there is meaningful overlap with your current research.
+
+I am planning to apply for the MAECI scholarship and the doctoral programme at <span class="email-var">[University]</span> for <span class="email-var">[Year]</span>. I have attached my CV and research proposal.
+
+With kind regards,
+<span class="email-var">[Your Full Name]</span> | <span class="email-var">[Email]</span> | <span class="email-var">[LinkedIn/ResearchGate]</span>
+        <button class="email-copy-btn" onclick="copyTpl('tpl-it')">Copy</button></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="it-docs">
+      <table class="i-table">
+        <tr><th>Document</th><th>Details & Instructions</th></tr>
+        <tr><td><strong>Declaration of Value (DoV) ⭐</strong></td><td>CRITICAL — apply at Italian Embassy Islamabad with all HEC+MOFA attested degrees. Takes 2–6 weeks. Fee ~€50–100. Without this, Italian universities cannot assess your admission eligibility.</td></tr>
+        <tr><td><strong>Consular Legalization</strong></td><td>Pakistan is NOT a Hague Convention member so you cannot get Apostille. Instead, get consular legalization from Italian Embassy for police clearance and other required documents.</td></tr>
+        <tr><td><strong>ISEE/ISEEU Declaration</strong></td><td>Income/assets declaration for DSU. Pakistani family income converted to EUR and assessed. Prepared with help from a CAF (tax assistance center) after arrival in Italy, using your Pakistani bank statements and salary certificates.</td></tr>
+        <tr><td><strong>Universitaly Pre-Enrollment</strong></td><td>Via universitaly.it — mandatory before student visa application. Complete BEFORE going to Italian Embassy for visa.</td></tr>
+        <tr><td><strong>Accommodation Proof</strong></td><td>Invitation letter from Italian university dorm or private accommodation booking confirmation. Required for visa.</td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="it-visa">
+      <div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>Italian Embassy Islamabad:</strong> Ramna 6. Ph: +92-51-2832770. Book VFS Global appointment early — slots fill months in advance.</div></div>
+      <div class="info-card" style="max-width:600px;"><h4>Type D Student Visa Documents</h4><ul>
+        <li>Visa application form (from Italian Embassy or VFS)</li>
+        <li>Valid passport (min. 3 months beyond intended stay)</li>
+        <li>University enrollment / pre-enrollment from universitaly.it</li>
+        <li>MAECI scholarship letter OR bank statement (min. €6,079/year)</li>
+        <li>Accommodation proof in Italy</li>
+        <li>Travel/health insurance valid in Italy (min. €30,000 coverage)</li>
+        <li>Declaration of Value (DoV) from Italian Embassy</li>
+        <li>2 passport photos (35×45mm, white background)</li>
+        <li>Return ticket or proof of intent to return to Pakistan</li>
+      </ul></div>
+    </div>
+    <div class="tab-panel" id="it-steps">
+      <div class="steps-wrap" id="it-steps-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────── GERMANY ────────────────── -->
+<div class="page" id="pg-germany">
+  <div class="ctry-hero">
+    <div class="ctry-hero-glow" style="background:var(--de)"></div>
+    <div class="ctry-flag-xl">🇩🇪</div>
+    <div class="ctry-hero-text">
+      <div class="ctry-hero-name">Germany</div>
+      <div class="ctry-hero-sub">Free tuition at public universities, prestigious DAAD funding (€861–1,200/month), and world-class engineering and research. APS certificate is mandatory for Pakistani applicants — start this first.</div>
+    </div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('de','scholarships',this)">Scholarships</button>
+    <button class="tab-btn" onclick="switchTab('de','portals',this)">Portals</button>
+    <button class="tab-btn" onclick="switchTab('de','howto',this)">How to Apply</button>
+    <button class="tab-btn" onclick="switchTab('de','professor',this)">Contact Professors</button>
+    <button class="tab-btn" onclick="switchTab('de','docs',this)">Extra Documents</button>
+    <button class="tab-btn" onclick="switchTab('de','visa',this)">Visa Guide</button>
+    <button class="tab-btn" onclick="switchTab('de','steps',this)">Step Tracker</button>
+  </div>
+  <div id="de-panels">
+    <div class="tab-panel active" id="de-scholarships">
+      <div class="sc-wrap">
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">DAAD — Deutscher Akademischer Austauschdienst</div><div class="sc-badge badge-full">€861–1,200 / month</div></div>
+          <div class="sc-meta"><span>🏛 German Academic Exchange Service</span><span>🎓 MS, PhD, Postdoc</span><span>📅 August–November annually</span></div>
+          <div class="sc-covers"><div class="sc-pill">€861–1,200/month stipend</div><div class="sc-pill">Travel allowance</div><div class="sc-pill">Health insurance</div><div class="sc-pill">Research allowance</div><div class="sc-pill">No tuition at public unis</div></div>
+          <div class="sc-deadline">📅 Most deadlines October–November. Check DAAD database for specific programs.</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://www2.daad.de/deutschland/stipendium/datenbank/en/21148-scholarship-database" target="_blank">↗ DAAD Scholarship Database</a><a class="btn-link btn-ghost" href="https://www.daad.de/en" target="_blank">daad.de</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">HEC–DAAD Joint Scholarship (Pakistan Only)</div><div class="sc-badge badge-full">Fully Funded</div></div>
+          <div class="sc-meta"><span>🏛 HEC Pakistan + DAAD Germany</span><span>🎓 PhD, Postdoc</span><span>🇵🇰 Pakistan applicants only</span></div>
+          <div class="sc-covers"><div class="sc-pill">Full DAAD benefits</div><div class="sc-pill">Flight allowance</div><div class="sc-pill">Monthly stipend</div></div>
+          <div class="sc-deadline">📅 Apply at hec.gov.pk — announcement January–March each year</div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://hec.gov.pk/english/scholarshipsgrants" target="_blank">↗ HEC Scholarships</a></div>
+        </div>
+        <div class="sc-card">
+          <div class="sc-top"><div class="sc-name">Deutschlandstipendium</div><div class="sc-badge badge-partial">€300 / month</div></div>
+          <div class="sc-meta"><span>🏛 Federal Gov + Private Sponsors</span><span>🎓 Enrolled students in Germany</span></div>
+          <div class="sc-covers"><div class="sc-pill">€300/month</div><div class="sc-pill">Networking events</div><div class="sc-pill">Compatible with DAAD</div></div>
+          <div class="sc-links"><a class="btn-link btn-primary" href="https://www.deutschlandstipendium.de/en" target="_blank">↗ deutschlandstipendium.de</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-panel" id="de-portals">
+      <table class="i-table">
+        <tr><th>Portal</th><th>Purpose</th><th>URL</th></tr>
+        <tr><td><strong>DAAD Scholarship Database</strong></td><td>Find all DAAD scholarships by level, field, deadline</td><td><a href="https://www2.daad.de/deutschland/stipendium/datenbank/en" target="_blank">daad.de/scholarship-db</a></td></tr>
+        <tr><td><strong>uni-assist</strong></td><td>Application processing center for most German universities — submit applications here</td><td><a href="https://www.uni-assist.de" target="_blank">uni-assist.de</a></td></tr>
+        <tr><td><strong>APS Germany (Pakistan)</strong></td><td>Academic Evaluation Centre — APS certificate MANDATORY for Pakistani applicants</td><td><a href="https://www.aps.org.pk" target="_blank">aps.org.pk</a></td></tr>
+        <tr><td><strong>German Embassy Islamabad</strong></td><td>Visa applications, APS info, student services. Ramna 5 Islamabad.</td><td><a href="https://islamabad.diplo.de" target="_blank">islamabad.diplo.de</a></td></tr>
+        <tr><td><strong>Fintiba (Blocked Account)</strong></td><td>Open German Sperrkonto online — easiest option for Pakistanis</td><td><a href="https://www.fintiba.com" target="_blank">fintiba.com</a></td></tr>
+        <tr><td><strong>Coracle (Blocked Account)</strong></td><td>Alternative Sperrkonto provider — compare fees with Fintiba</td><td><a href="https://www.coracle.de" target="_blank">coracle.de</a></td></tr>
+        <tr><td><strong>Study in Germany (Official)</strong></td><td>German government portal for international students</td><td><a href="https://www.study-in-germany.de" target="_blank">study-in-germany.de</a></td></tr>
+        <tr><td><strong>DFG Project Database (Gepris)</strong></td><td>Find funded research projects and their Principal Investigators — great for finding supervisors</td><td><a href="https://gepris.dfg.de" target="_blank">gepris.dfg.de</a></td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="de-howto">
+      <div class="grid2">
+        <div class="info-card"><h4>Step 1: APS Certificate (Start FIRST)</h4><ul>
+          <li>Apply at aps.org.pk or German Embassy Islamabad APS office</li>
+          <li>Submit all HEC-attested docs + CNIC + form + fee ~PKR 15,000</li>
+          <li>Interview may be required — prepare to discuss thesis in detail</li>
+          <li>APS issued: valid for life. Takes 6–8 weeks.</li>
+          <li>Without APS, German universities CANNOT process your application</li>
+        </ul></div>
+        <div class="info-card"><h4>Step 2: Apply via uni-assist</h4><ul>
+          <li>Register at uni-assist.de — upload docs including APS certificate</li>
+          <li>uni-assist processes and forwards to university</li>
+          <li>Fee: €75 for first application, €30 each additional</li>
+          <li>Some unis have own portals: TU Berlin, RWTH Aachen, TUM, KIT</li>
+        </ul></div>
+        <div class="info-card"><h4>Step 3: Apply for DAAD</h4><ul>
+          <li>Register at daad.de — create applicant account</li>
+          <li>Select scholarship matching your level and field</li>
+          <li>Upload: CV, motivation letter, research proposal, recommendation letters</li>
+          <li>Most deadlines: October–November for following year</li>
+          <li>Selection: committee review + sometimes interview</li>
+        </ul></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="de-professor">
+      <div class="alert alert-info"><span class="alert-icon">💡</span><div>For DAAD and direct PhD applications, a <strong>supervisor letter of intent</strong> from a German professor is extremely valuable — sometimes mandatory. Email 15–20 professors; expect 2–5 replies.</div></div>
+      <div class="sec-h"><h2>Professor Email Template — Germany</h2><div class="sec-h-line"></div></div>
+      <div class="email-wrap">
+        <div class="email-body" id="tpl-de">Subject: PhD Research Enquiry — [Research Area] — DAAD Applicant from Pakistan
+
+Dear Professor <span class="email-var">[Last Name]</span>,
+
+I am writing regarding a potential PhD position in your group. My name is <span class="email-var">[Your Full Name]</span>, holding a <span class="email-var">[MS/BS]</span> in <span class="email-var">[Field]</span> from <span class="email-var">[University]</span>, Pakistan (Final grade: <span class="email-var">[CGPA/Grade]</span>).
+
+I am particularly drawn to your research on <span class="email-var">[specific topic]</span>, especially your publication "<span class="email-var">[Paper Title]</span>" (<span class="email-var">[Year]</span>). The problem of <span class="email-var">[specific problem]</span> is directly relevant to my work during my thesis at <span class="email-var">[University]</span>, where I developed <span class="email-var">[specific method/result]</span>.
+
+I am applying for the DAAD Research Grants Doctoral Programme for <span class="email-var">[Year]</span>, which requires a letter of intent from a German host supervisor. I would be deeply grateful if you could consider hosting me.
+
+I have attached: (1) my CV, (2) a 2-page research proposal, and (3) writing samples from my thesis.
+
+Thank you sincerely.
+
+Best regards,
+<span class="email-var">[Your Full Name]</span> | <span class="email-var">[Email]</span> | <span class="email-var">[ORCID/Google Scholar]</span>
+        <button class="email-copy-btn" onclick="copyTpl('tpl-de')">Copy</button></div>
+      </div>
+    </div>
+    <div class="tab-panel" id="de-docs">
+      <table class="i-table">
+        <tr><th>Document</th><th>Details</th></tr>
+        <tr><td><strong>APS Certificate ⭐</strong></td><td>MANDATORY for all Pakistani applicants. Apply at aps.org.pk or German Embassy APS office. Fee ~PKR 15,000. Interview may be required. Takes 6–8 weeks. Start this FIRST. Valid for life — no expiry.</td></tr>
+        <tr><td><strong>German Language Certificate</strong></td><td>TestDaF (min. TDN 4 in all sections) or DSH Level 2 for German-medium programs. Goethe Institut Pakistan (Lahore, Karachi) offers courses and exams. English-medium: IELTS 6.5+ / TOEFL 90+.</td></tr>
+        <tr><td><strong>Blocked Account (Sperrkonto)</strong></td><td>Deposit €11,208 (~PKR 3.5M) before visa application. Use Fintiba.com or Coracle.de — both accept Pakistani accounts. Money released monthly after arrival (€934/month). Takes 1–2 weeks to set up.</td></tr>
+        <tr><td><strong>Motivationsschreiben</strong></td><td>German universities and DAAD require this in addition to general SOP. Address specifically: research plan in Germany, contribution after returning, ties to Pakistan.</td></tr>
+        <tr><td><strong>uni-assist Processing</strong></td><td>Submit academic documents via uni-assist.de after getting APS certificate. €75 first application. Some top universities (TUM, KIT, RWTH) have their own direct portals.</td></tr>
+      </table>
+    </div>
+    <div class="tab-panel" id="de-visa">
+      <div class="alert alert-warn"><span class="alert-icon">⚠</span><div><strong>German Embassy Islamabad:</strong> Diplomatic Enclave, Ramna 5. Book via VFS Global. Appointment wait: 8–12 weeks — book months in advance.</div></div>
+      <div class="info-card" style="max-width:600px;"><h4>National Visa (Type D) Documents</h4><ul>
+        <li>Visa application form (from German Embassy)</li>
+        <li>Valid passport (6+ months validity)</li>
+        <li>APS certificate (absolutely mandatory)</li>
+        <li>Blocked account proof — Fintiba/Coracle confirmation (€11,208)</li>
+        <li>University admission letter (conditional or unconditional)</li>
+        <li>Language certificate (German or English proficiency)</li>
+        <li>Health insurance proof valid in Germany (first 3 months min.)</li>
+        <li>DAAD scholarship letter if applicable (can replace blocked account)</li>
+        <li>2 biometric passport photos (35×45mm)</li>
+        <li>Accommodation proof in Germany</li>
+        <li>CNIC attested copy</li>
+        <li>Visa fee: ~€75</li>
+      </ul></div>
+    </div>
+    <div class="tab-panel" id="de-steps">
+      <div class="steps-wrap" id="de-steps-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────────── TIMELINE ────────────────── -->
+<div class="page" id="pg-timeline">
+  <div class="ph"><div class="ph-eyebrow">Calendar</div><h1>Deadlines Timeline</h1><p>Month-by-month application calendar — never miss a deadline.</p></div>
+  <div class="alert alert-warn"><span class="alert-icon">⏱</span><div><strong>Processing times (Pakistan):</strong> HEC Attestation 4–8 weeks · IBCC 4–6 weeks · APS Germany 6–8 weeks · MOFA 1–2 weeks · Passport Renewal 4–6 weeks · Police Certificate 1–2 weeks</div></div>
+  <div class="timeline" id="timeline-wrap"></div>
+</div>
+
+<!-- ────────────────── SOP ────────────────── -->
+<div class="page" id="pg-sop">
+  <div class="ph"><div class="ph-eyebrow">Writing Guide</div><h1>SOP & Application Strategy</h1><p>Full consultant-level advice to write winning applications from Pakistan.</p></div>
+  <div class="grid2">
+    <div class="info-card"><h4>SOP Structure (Paragraph Breakdown)</h4><ul>
+      <li><strong>P1 — The Hook:</strong> A specific moment or problem that sparked your interest. Never "since childhood…"</li>
+      <li><strong>P2 — Academic Journey:</strong> Key courses, CGPA, relevant academic achievements</li>
+      <li><strong>P3 — Research / Work:</strong> Thesis topic, methods, results. Internships, publications</li>
+      <li><strong>P4 — Why Here:</strong> Name specific professor + specific paper + why this country</li>
+      <li><strong>P5 — Future Impact:</strong> Career plan and Pakistan contribution post-scholarship</li>
+    </ul></div>
+    <div class="info-card"><h4>Never Write These Phrases</h4><ul>
+      <li>"Since childhood I always dreamed of studying abroad…"</li>
+      <li>"Your prestigious university is world-renowned for excellence…"</li>
+      <li>"I am a hardworking, dedicated and passionate student…"</li>
+      <li>Generic family background stories unrelated to research</li>
+      <li>Listing every subject without connecting them to your goals</li>
+    </ul></div>
+    <div class="info-card"><h4>Recommendation Letter Tips</h4><ul>
+      <li>Ask 2 months in advance — professors are very busy</li>
+      <li>Provide: your CV, draft SOP, transcript, scholarship requirements</li>
+      <li>Ask them to highlight: research ability, problem-solving, peer comparison</li>
+      <li>Send a polite reminder 2 weeks before deadline</li>
+      <li>Thank referees regardless of outcome</li>
+    </ul></div>
+    <div class="info-card"><h4>Pakistan-Specific Strategy</h4><ul>
+      <li>Apply to 5–10 scholarships simultaneously — never rely on one</li>
+      <li>Join Facebook groups: "Pakistanis in Korea / Germany / China"</li>
+      <li>HEC also offers its own Overseas Scholarships — monitor hec.gov.pk</li>
+      <li>Make a master spreadsheet: scholarship, deadline, status, portal link</li>
+      <li>Get 5 extra sets of attested documents — use across multiple applications</li>
+    </ul></div>
+  </div>
+</div>
+
+      </div><!-- /page-wrap -->
+    </main>
+  </div>
+</div>
+
+<script>
+// ══ DATA ══
+const stepsData = {
+  kr: [
+    {t:'Apply for IBCC equivalence certificate',d:'ibcc.edu.pk — mandatory. 4–6 weeks.'},
+    {t:'Get HEC degree attestation',d:'hec.gov.pk/attestation — 4–8 weeks.'},
+    {t:'Get MOFA attestation',d:'Visit MOFA office Islamabad/Lahore/Karachi. 2–3 days.'},
+    {t:'Take IELTS (6.0+) or TOPIK exam',d:'British Council Pakistan or topik.go.kr for TOPIK.'},
+    {t:'Register at studyinkorea.go.kr',d:'Create GKS account and download application forms.'},
+    {t:'Write GKS Personal Statement and Study Plan',d:'Use GKS-specific format. Mention Korea–Pakistan contribution.'},
+    {t:'Email 5–10 Korean professors (University Track)',d:'Use email template provided in Contact Professors tab.'},
+    {t:'Collect and submit all application documents',d:'Embassy Track: Korean Embassy Islamabad. University Track: via portal.'},
+    {t:'Attend interview if shortlisted',d:'Embassy Track: interview at Korean Embassy Islamabad.'},
+    {t:'Receive acceptance letter from Korean university',d:'Sent by NIIED or directly from university.'},
+    {t:'Apply for D-2 Student Visa',d:'Korean Embassy Islamabad with full visa document set.'},
+    {t:'Depart for South Korea 🎉',d:'Language training begins on arrival — 1 year.'},
+  ],
+  cn: [
+    {t:'Register at apply.csc.edu.cn',d:'Create CSC account — the main application portal.'},
+    {t:'Apply for IBCC equivalence',d:'ibcc.edu.pk — mandatory for all overseas applications.'},
+    {t:'Get HEC + MOFA attestation',d:'All academic documents — parallel process to save time.'},
+    {t:'Email Chinese professors for supervision',d:'University Track: supervisor letter improves chances significantly.'},
+    {t:'Complete CSC application form online',d:'Agency code for Chinese Embassy Pakistan: CN92004.'},
+    {t:'Complete China-specific medical exam',d:'Download Foreigner Physical Exam Form from Chinese Embassy website.'},
+    {t:'Submit via Embassy Track or University Track',d:'Embassy: Diplomatic Enclave St. 5, Islamabad.'},
+    {t:'Await CSC results (May–June)',d:'Check email and CSC portal regularly.'},
+    {t:'Receive JW202 form from university',d:'Required for X1 student visa application.'},
+    {t:'Apply for X1 Student Visa at Chinese Embassy',d:'All visa documents including medical exam and JW202.'},
+    {t:'Depart for China 🎉',d:''},
+  ],
+  it: [
+    {t:'Apply for IBCC equivalence certificate',d:'ibcc.edu.pk — 4–6 weeks.'},
+    {t:'Get HEC + MOFA attestation',d:'All degrees and transcripts. Parallel process.'},
+    {t:'Apply for Declaration of Value (DoV) at Italian Embassy',d:'Critical! Italian Embassy Islamabad: Ramna 6. Takes 2–6 weeks, fee ~€50–100.'},
+    {t:'Register at universitaly.it for pre-enrollment',d:'Mandatory for student visa. Upload qualifications Oct–Dec.'},
+    {t:'Check MAECI scholarship announcement (Feb–March)',d:'Via Italian Embassy Islamabad. Apply immediately when open.'},
+    {t:'Receive admission letter from Italian university',d:'After DoV verification and university application.'},
+    {t:'Book VFS appointment for Italy visa',d:'Book 3–4 months ahead — slots fill up fast.'},
+    {t:'Submit Type D Student Visa application',d:'Italian Embassy via VFS. All documents including DoV and pre-enrollment.'},
+    {t:'Arrive in Italy and formally enroll (iscrizione)',d:'Go to Segreteria Studenti with all documents.'},
+    {t:'Apply for DSU regional scholarship',d:'After enrollment. Submit ISEE with family income proof.'},
+    {t:'Depart/Settle in Italy 🎉',d:''},
+  ],
+  de: [
+    {t:'Apply for APS Certificate — START HERE',d:'aps.org.pk or German Embassy Islamabad. 6–8 weeks, fee ~PKR 15,000. ABSOLUTELY MANDATORY.'},
+    {t:'Get IBCC + HEC + MOFA attestation',d:'Run all three in parallel to save time.'},
+    {t:'Research German professors and send emails',d:'Use DAAD Find-a-Supervisor + gepris.dfg.de + ResearchGate.'},
+    {t:'Register and upload docs at uni-assist.de',d:'APS certificate required. Fee €75 first application.'},
+    {t:'Register for DAAD scholarship at daad.de',d:'Create account, select program matching your level and field.'},
+    {t:'Open blocked account (Sperrkonto)',d:'Fintiba.com or Coracle.de. Deposit €11,208. Takes 1–2 weeks.'},
+    {t:'Get language certificate (IELTS 6.5+ / TestDaF)',d:'IELTS at British Council Pakistan. German at Goethe Institut Lahore/Karachi.'},
+    {t:'Submit DAAD application (October–November deadline)',d:'All documents uploaded before deadline. No extensions.'},
+    {t:'Receive university admission letter',d:'Conditional or unconditional — needed for visa.'},
+    {t:'Book German Embassy visa appointment via VFS',d:'Book months ahead. Islamabad: Diplomatic Enclave Ramna 5.'},
+    {t:'Submit National Visa application',d:'All docs: APS + Sperrkonto + admission + insurance + APS + photos.'},
+    {t:'Depart for Germany 🎉',d:''},
+  ],
+};
+
+const timelineData = [
+  {month:'January – February', events:[
+    {text:'CSC China Embassy Track applications open',ctry:'cn'},
+    {text:'HEC–DAAD joint scholarship announcement',ctry:'de'},
+    {text:'HEC–ANSO China scholarship opens',ctry:'cn'},
+    {text:'MAECI Italy scholarship opens (Feb–March)',ctry:'it'},
+    {text:'Start APS certificate application for Germany',ctry:'de'},
+    {text:'Renew passport and start IBCC if not done',ctry:'pk'},
+  ]},
+  {month:'March – April', events:[
+    {text:'CSC China deadline (usually late March)',ctry:'cn'},
+    {text:'GKS University Track opens (Feb–April)',ctry:'kr'},
+    {text:'MAECI Italy deadline (usually March)',ctry:'it'},
+    {text:'KAIST / POSTECH Spring application deadline',ctry:'kr'},
+    {text:'Italian university portals open for next year',ctry:'it'},
+    {text:'Start professor outreach for all countries',ctry:'pk'},
+  ]},
+  {month:'May – June', events:[
+    {text:'CSC China results announced',ctry:'cn'},
+    {text:'GKS University Track results',ctry:'kr'},
+    {text:'German university summer application window opens',ctry:'de'},
+    {text:'Universitaly Italy pre-enrollment opens',ctry:'it'},
+    {text:'Book IELTS / TOEFL if not already done',ctry:'pk'},
+  ]},
+  {month:'July – August', events:[
+    {text:'Italy DSU scholarship opens (July–November)',ctry:'it'},
+    {text:'DAAD applications open (August–November)',ctry:'de'},
+    {text:'German universities winter semester applications',ctry:'de'},
+    {text:'Complete all HEC + MOFA attestations',ctry:'pk'},
+    {text:'Get Police Character Certificate (valid 6 months)',ctry:'pk'},
+  ]},
+  {month:'September – October', events:[
+    {text:'GKS Embassy Track opens (September–November)',ctry:'kr'},
+    {text:'DAAD most program deadlines (October–November)',ctry:'de'},
+    {text:'KAIST / SNU Fall application window',ctry:'kr'},
+    {text:'Finalise all SOPs and recommendation letters',ctry:'pk'},
+  ]},
+  {month:'November – December', events:[
+    {text:'GKS Embassy Track deadline (usually November)',ctry:'kr'},
+    {text:'DAAD final submission deadline (most programs)',ctry:'de'},
+    {text:'Italian university enrollment deadlines',ctry:'it'},
+    {text:'Prepare Sperrkonto blocked account for Germany',ctry:'de'},
+    {text:'Review all submitted applications and follow up',ctry:'pk'},
+  ]},
+];
+
+const defaultTodos = {
+  all:[ {t:'Create scholarship tracking spreadsheet (all deadlines)',d:false},{t:'Scan all original documents to Google Drive',d:false},{t:'Book IELTS exam at British Council Pakistan',d:false},{t:'Write first draft of SOP',d:false},{t:'Ask 3 professors for recommendation letters',d:false},{t:'Join Facebook: "Pakistanis in Korea/Germany/China"',d:false} ],
+  kr:[ {t:'Download GKS application form from studyinkorea.go.kr',d:false},{t:'Register account on studyinkorea.go.kr',d:false},{t:'Research 5 Korean professors in your field',d:false},{t:'Email shortlisted Korean professors (use template)',d:false},{t:'Prepare GKS Personal Statement (GKS format)',d:false},{t:'Prepare GKS Study Plan — mention Korea–Pakistan',d:false},{t:'Submit to Korean Embassy Islamabad',d:false},{t:'Check TOPIK exam schedule at topik.go.kr',d:false} ],
+  cn:[ {t:'Register at apply.csc.edu.cn',d:false},{t:'Choose 3 target Chinese universities',d:false},{t:'Email 5 Chinese professors for supervision',d:false},{t:'Download Foreigner Physical Exam Form',d:false},{t:'Complete medical exam at government hospital',d:false},{t:'Submit application — Agency code CN92004',d:false},{t:'Check HEC-ANSO scholarship at hec.gov.pk',d:false},{t:'Get JW202 form after acceptance',d:false} ],
+  it:[ {t:'Register at universitaly.it',d:false},{t:'Apply for Declaration of Value at Italian Embassy',d:false},{t:'Submit pre-enrollment via universitaly.it',d:false},{t:'Check MAECI scholarship announcement (Feb–March)',d:false},{t:'Book VFS appointment for Italy visa',d:false},{t:'Apply for Italy Type D student visa',d:false},{t:'Register with regional DSU office after arrival',d:false} ],
+  de:[ {t:'Apply for APS Certificate at aps.org.pk — DO THIS FIRST',d:false},{t:'Register at uni-assist.de',d:false},{t:'Search DAAD scholarships at daad.de',d:false},{t:'Email 10–15 German professors (use template)',d:false},{t:'Open Sperrkonto blocked account at fintiba.com',d:false},{t:'Submit DAAD application before October deadline',d:false},{t:'Book German Embassy visa appointment (VFS)',d:false},{t:'Get German language cert from Goethe Institut',d:false} ],
+  docs:[ {t:'Apply for IBCC equivalence — ibcc.edu.pk',d:false},{t:'Apply for HEC attestation — hec.gov.pk/attestation',d:false},{t:'Get MOFA attestation in Islamabad',d:false},{t:'Renew passport at NADRA if expiring within 2 years',d:false},{t:'Get police character certificate from police station',d:false},{t:'Get domicile certificate from DC office',d:false},{t:'Get 10 official sealed transcripts from university',d:false},{t:'Get 30+ passport-size photos (white background)',d:false},{t:'Get medical fitness certificate from hospital',d:false},{t:'Get COVID vaccination certificate from NADRA',d:false} ],
+  personal:[ {t:'Create Google Drive folder for all scanned docs',d:false},{t:'Find seniors who got target scholarships — ask for advice',d:false},{t:'Set calendar reminders for all scholarship deadlines',d:false},{t:'Make backup copies of all attested documents',d:false},{t:'Budget for document attestation fees and exam costs',d:false} ],
+};
+
+// ══ STATE ══
+let todos = {};
+let selCountries = ['kr','cn','it','de'];
+let curTodoCat = 'all';
+let user = {};
+
+// ══ CURSOR ══
+const cur = document.getElementById('cur');
+const curR = document.getElementById('curR');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px'; cur.style.top = e.clientY + 'px';
+  setTimeout(() => { curR.style.left = e.clientX + 'px'; curR.style.top = e.clientY + 'px'; }, 80);
+});
+
+// ══ SCREENS ══
+function showReg() {
+  document.getElementById('s-welcome').classList.remove('active');
+  document.getElementById('s-register').classList.add('active');
+}
+
+function togC(el) {
+  el.classList.toggle('selected');
+}
+
+function launch() {
+  const fn = document.getElementById('rFN').value.trim() || 'Student';
+  const ln = document.getElementById('rLN').value.trim() || '';
+  const deg = document.getElementById('rDeg').value || 'Scholar';
+  user = { fn, ln, deg, field: document.getElementById('rField').value };
+
+  document.getElementById('nav-name').textContent = fn + (ln ? ' ' + ln : '');
+  document.getElementById('nav-ava').textContent = fn[0]?.toUpperCase() || 'S';
+  document.getElementById('nav-degree').textContent = deg.split(' ')[0] || 'Student';
+  document.getElementById('dash-title').textContent = 'Welcome, ' + fn;
+
+  buildStatGrid();
+  buildSteps();
+  buildTodosData();
+  buildTimeline();
+
+  document.getElementById('s-register').classList.remove('active');
+  document.getElementById('s-app').classList.add('active');
+}
+
+// ══ NAVIGATION ══
+function goPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item,.sb-ctry').forEach(i => i.classList.remove('active'));
+  const pg = document.getElementById('pg-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ══ STAT GRID ══
+function buildStatGrid() {
+  const cfg = {
+    docs:{flag:'📋',label:'Documents',cls:'docs',fillCls:'',color:'var(--gold)',page:'docs'},
+    kr:{flag:'🇰🇷',label:'South Korea',cls:'kr',color:'var(--kr)',page:'korea'},
+    cn:{flag:'🇨🇳',label:'China',cls:'cn',color:'var(--cn)',page:'china'},
+    it:{flag:'🇮🇹',label:'Italy',cls:'it',color:'var(--it)',page:'italy'},
+    de:{flag:'🇩🇪',label:'Germany',cls:'de',color:'var(--de)',page:'germany'},
+  };
+  const grid = document.getElementById('stat-grid');
+  let h = '';
+  ['docs','kr','cn','it','de'].forEach(k => {
+    const c = cfg[k];
+    h += `<div class="stat-card" onclick="goPage('${c.page}',null)" id="sc-${k}">
+      <div class="stat-line" style="background:${c.color}"></div>
+      <div class="stat-flag">${c.flag}</div>
+      <div class="stat-label">${c.label}</div>
+      <div class="stat-value" id="sv-${k}">0%</div>
+      <div class="stat-bar-track"><div class="stat-bar" id="sb-${k}" style="background:${c.color}"></div></div>
+    </div>`;
+  });
+  grid.innerHTML = h;
+}
+
+function updStat(key, pct) {
+  const v = document.getElementById('sv-' + key);
+  const b = document.getElementById('sb-' + key);
+  if (v) v.textContent = pct + '%';
+  if (b) b.style.width = pct + '%';
+  const sp = document.getElementById('sp-' + key);
+  if (sp) sp.textContent = pct + '%';
+}
+
+// ══ TABS ══
+function switchTab(country, tab, btn) {
+  const panelContainer = document.getElementById(country + '-panels');
+  panelContainer.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.closest('.tab-bar').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(country + '-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ══ CHECKLIST ══
+const ckTotals = {personal:6,academic:8,financial:5,application:6,medical:4};
+function ckItem(el, section, total) {
+  el.classList.toggle('checked');
+  const body = el.closest('.cl-body');
+  const all = body.querySelectorAll('.cl-item');
+  let done = 0; all.forEach(i => { if(i.classList.contains('checked')) done++; });
+  document.getElementById('cnt-' + section).textContent = done + ' / ' + all.length + ' completed';
+  // Update docs stat
+  const allItems = document.querySelectorAll('#pg-docs .cl-item');
+  const allDone = document.querySelectorAll('#pg-docs .cl-item.checked');
+  const pct = allItems.length ? Math.round(allDone.length / allItems.length * 100) : 0;
+  updStat('docs', pct);
+}
+
+function togCL(hdr) {
+  const body = hdr.nextElementSibling;
+  const ch = hdr.querySelector('.cl-chevron');
+  body.classList.toggle('open');
+  ch.classList.toggle('open');
+}
+
+// ══ STEPS ══
+function buildSteps() {
+  ['kr','cn','it','de'].forEach(code => {
+    const data = stepsData[code];
+    const container = document.getElementById(code + '-steps-list');
+    if (!container) return;
+    let h = '';
+    data.forEach((s, i) => {
+      h += `<div class="step-item" id="step-${code}-${i}">
+        <div class="step-left">
+          <div class="step-num" onclick="togStep('${code}',${i})">${i+1}</div>
+          ${i < data.length-1 ? `<div class="step-connector" id="sc-${code}-${i}"></div>` : ''}
+        </div>
+        <div>
+          <div class="step-title" onclick="togStep('${code}',${i})">${s.t}</div>
+          ${s.d ? `<div class="step-desc">${s.d}</div>` : ''}
+        </div>
+      </div>`;
+    });
+    container.innerHTML = h;
+  });
+}
+
+function togStep(code, idx) {
+  const el = document.getElementById(`step-${code}-${idx}`);
+  el.classList.toggle('done');
+  const all = document.querySelectorAll(`[id^="step-${code}-"]`);
+  let d = 0; all.forEach(s => { if(s.classList.contains('done')) d++; });
+  const pct = Math.round(d / all.length * 100);
+  updStat(code, pct);
+}
+
+// ══ TODOS ══
+function buildTodosData() {
+  Object.keys(defaultTodos).forEach(cat => {
+    todos[cat] = defaultTodos[cat].map(t => ({...t}));
+  });
+  renderTodos();
+}
+
+function switchTodo(cat, btn) {
+  curTodoCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderTodos();
+}
+
+function renderTodos() {
+  const wrap = document.getElementById('todo-boards');
+  const labels = {all:'All Tasks',kr:'🇰🇷 South Korea',cn:'🇨🇳 China',it:'🇮🇹 Italy',de:'🇩🇪 Germany',docs:'📋 Documents',personal:'✦ Personal'};
+  const cats = curTodoCat === 'all' ? Object.keys(todos) : [curTodoCat];
+  let h = '';
+  cats.forEach(cat => {
+    const list = todos[cat];
+    const done = list.filter(t => t.d).length;
+    h += `<div class="todo-section">
+      <div class="todo-header">
+        <h3>${labels[cat] || cat}</h3>
+        <span class="todo-stats">${done} of ${list.length} completed</span>
+      </div>
+      <div class="todo-add-row">
+        <input class="todo-input" id="ti-${cat}" placeholder="Add a custom task…" onkeydown="if(event.key==='Enter')addTodo('${cat}')" />
+        <button class="todo-add-btn" onclick="addTodo('${cat}')">+ Add</button>
+      </div>
+      <ul class="todo-list">`;
+    list.forEach((t, i) => {
+      h += `<li class="todo-item${t.d?' done':''}" id="td-${cat}-${i}">
+        <div class="todo-cb" onclick="togTodo('${cat}',${i})">${t.d?'✓':''}</div>
+        <span>${t.t}</span>
+        <span class="todo-delete" onclick="delTodo('${cat}',${i})">×</span>
+      </li>`;
+    });
+    h += `</ul></div>`;
+  });
+  wrap.innerHTML = h;
+}
+
+function togTodo(cat, i) { todos[cat][i].d = !todos[cat][i].d; renderTodos(); }
+function delTodo(cat, i) { todos[cat].splice(i,1); renderTodos(); }
+function addTodo(cat) {
+  const inp = document.getElementById('ti-' + cat);
+  if (!inp || !inp.value.trim()) return;
+  todos[cat].push({t: inp.value.trim(), d: false});
+  renderTodos();
+  document.getElementById('ti-' + cat)?.focus();
+}
+
+// ══ TIMELINE ══
+function buildTimeline() {
+  const wrap = document.getElementById('timeline-wrap');
+  let h = '';
+  timelineData.forEach(block => {
+    h += `<div class="tl-item"><div class="tl-month">${block.month}</div><div class="tl-events">`;
+    block.events.forEach(ev => {
+      h += `<div class="tl-ev"><span>${ev.text}</span><span class="tl-tag tag-${ev.ctry}">${ev.ctry === 'pk' ? '🇵🇰 Action' : ev.ctry.toUpperCase()}</span></div>`;
+    });
+    h += `</div></div>`;
+  });
+  wrap.innerHTML = h;
+}
+
+// ══ EMAIL COPY ══
+function copyTpl(id) {
+  const el = document.getElementById(id);
+  const txt = el.innerText.replace('Copy','').trim();
+  navigator.clipboard.writeText(txt).catch(() => {});
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══ COUNTRY CARD TOGGLE ══
+function togC(el) { el.classList.toggle('selected'); }
+
+// ══ INIT STARS ══
+(function() {
+  // just ambient, already done via CSS orbs
+})();
+</script>
+</body>
+</html>
